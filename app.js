@@ -1,7 +1,7 @@
 const tg=window.Telegram?.WebApp;
 tg?.ready();tg?.expand();
 const root=document.getElementById('app');
-const state={me:null,events:[],view:'all',selected:null,participants:[],tables:[],adminRegs:[],organizers:[],language:'en',filter:'all',editId:null,stats:null,adminStats:[]};
+const state={me:null,events:[],view:'all',selected:null,participants:[],tables:[],adminRegs:[],organizers:[],language:'en',filter:'all',editId:null,stats:null,adminStats:[],leaderboard:[],leaderboardOpen:false,leaderboardHasMore:false};
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtDate=iso=>new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Moscow'}).format(new Date(iso))+' (МСК)';
 const langLabel=lang=>lang==='ru'?'🇷🇺 Русский':'🇬🇧 Английский';
@@ -22,7 +22,10 @@ else if(state.view==='editor'){const e=state.events.find(x=>x.id===state.editId)
 else if(state.view==='requests'){const e=state.events.find(x=>x.id===state.selected);html+=`<button class="back" data-action="admin">‹ Назад</button><h1>Записи на встречу</h1><p class="muted">${esc(e?.title||'')}</p><div class="filter">${['pending','approved','rejected','cancelled'].map(s=>`<span class="pill ${s==='approved'?'green':s==='pending'?'orange':'gray'}">${({pending:'Ожидают',approved:'Одобрены',rejected:'Отклонены',cancelled:'Отменили'})[s]}: ${state.adminRegs.filter(r=>r.status===s).length}</span>`).join('')}</div>${state.adminRegs.length?state.adminRegs.map(r=>`<div class="admin-reg"><div class="person">${safeUser(r)}<div class="person-info"><div class="person-name">${esc([r.first_name,r.last_name].filter(Boolean).join(' '))}</div><div class="person-sub">${r.username?'@'+esc(r.username):'Telegram ID: '+r.user_id} · ${langLabel(r.language)}</div><div class="status">${statusLabel(r.status)}${r.table_number?' · Стол №'+r.table_number:''}</div></div></div></div>`).join(''):'<div class="empty">Заявок пока нет</div>'}`;}
 else if(state.view==='my-stats'){
   const s=state.stats||{count:0,history:[]};
-  html+=`<button class="back" data-action="all">‹ Назад</button><section class="hero"><div class="hero-emoji">🏅</div><h1>Мои посещения</h1><p class="muted">Засчитываются после завершения встречи организатором</p><h2>${s.count} ${s.count===1?'посещение':'посещений'}</h2></section><div class="panel">${s.history.length?s.history.map(h=>`<div class="person"><div class="person-info"><b>${esc(h.event?.title||'Встреча')}</b><div class="person-sub">${h.event?.starts_at?fmtDate(h.event.starts_at):''}</div></div><span class="pill green">+1</span></div>`).join(''):'<div class="empty">Пока нет засчитанных посещений</div>'}</div>${nav()}`;
+  const top=state.leaderboard.slice(0,5);
+  const medal=n=>n===1?'🥇':n===2?'🥈':n===3?'🥉':`№${n}`;
+  const playerRow=p=>`<div class="person"><span style="min-width:38px;font-weight:700">${medal(p.place)}</span><div class="person-info"><div class="person-name">${esc([p.first_name,p.last_name].filter(Boolean).join(' ')||'Участник')}</div></div><b>${p.visits} 🏅</b></div>`;
+  html+=`<button class="back" data-action="all">‹ Назад</button><section class="hero"><div class="hero-emoji">🏅</div><h1>Мои посещения</h1><p class="muted">Засчитываются после завершения встречи организатором</p><h2>${s.count} ${s.count===1?'посещение':'посещений'}</h2></section><h2>🏆 Топ-5 участников</h2><p class="muted">По количеству засчитанных посещений</p><div class="panel">${top.length?top.map(playerRow).join(''):'<div class="empty">Пока никто не набрал посещений</div>'}</div>${state.leaderboardOpen?`<h3>Полный рейтинг</h3><div class="panel">${state.leaderboard.slice(5).length?state.leaderboard.slice(5).map(playerRow).join(''):'<div class="empty">Других участников пока нет</div>'}</div>${state.leaderboardHasMore?'<button class="secondary" data-action="leaderboard-more">Показать ещё</button>':'<button class="secondary" data-action="leaderboard-hide">Свернуть рейтинг</button>'}`:state.leaderboardHasMore?'<button class="secondary" data-action="leaderboard-more">Посмотреть остальных участников</button>':''}<h2>История посещений</h2><div class="panel">${s.history.length?s.history.map(h=>`<div class="person"><div class="person-info"><b>${esc(h.event?.title||'Встреча')}</b><div class="person-sub">${h.event?.starts_at?fmtDate(h.event.starts_at):''}</div></div><span class="pill green">+1</span></div>`).join(''):'<div class="empty">Пока нет засчитанных посещений</div>'}</div>${nav()}`;
 }
 else if(state.view==='organizers'){
   const rows=state.organizers.map(o=>`<div class="person"><div class="person-info"><div class="person-name">${esc([o.first_name,o.last_name].filter(Boolean).join(' ')||'Telegram ID '+o.telegram_id)}</div><div class="person-sub">${o.username?'@'+esc(o.username)+' · ':''}ID: ${o.telegram_id}${o.is_owner?' · Главный организатор':''}</div></div>${o.is_owner?'':`<button class="danger small" data-action="remove-organizer" data-id="${o.telegram_id}">Удалить</button>`}</div>`).join('');
@@ -38,7 +41,16 @@ async function requests(){state.adminRegs=(await api(`/api/admin/events/${state.
 root.addEventListener('click',async ev=>{const b=ev.target.closest('[data-action]');if(!b)return;const action=b.dataset.action,id=Number(b.dataset.id);try{
  if(['all','mine','admin','detail'].includes(action)){state.view=action;render()}
  else if(action==='event'){state.selected=id;state.language='en';state.view='detail';render()}
- else if(action==='my-stats'){state.stats=await api('/api/my/stats');state.view='my-stats';render()}
+ else if(action==='my-stats'){
+   const [stats,ranking]=await Promise.all([api('/api/my/stats'),api('/api/leaderboard?offset=0&limit=5')]);
+   state.stats=stats;state.leaderboard=ranking.players;state.leaderboardHasMore=ranking.has_more;state.leaderboardOpen=false;
+   state.view='my-stats';render();
+ }
+ else if(action==='leaderboard-more'){
+   const next=await api(`/api/leaderboard?offset=${state.leaderboard.length}&limit=50`);
+   state.leaderboard.push(...next.players);state.leaderboardHasMore=next.has_more;state.leaderboardOpen=true;render();
+ }
+ else if(action==='leaderboard-hide'){state.leaderboardOpen=false;render()}
  else if(action==='organizers'){const r=await api('/api/admin/organizers');state.organizers=r.organizers;state.view='organizers';render()}
  else if(action==='remove-organizer'){if(confirm('Удалить этого организатора?')){await api(`/api/admin/organizers/${id}`,'DELETE');toast('Организатор удалён');const r=await api('/api/admin/organizers');state.organizers=r.organizers;render()}}
  else if(action==='admin-stats'){const r=await api('/api/admin/stats');state.adminStats=r.users;state.view='admin-stats';render()}
