@@ -69,3 +69,21 @@ button:focus-visible,[data-action="event"]:focus-visible{outline:3px solid #89bd
 @media(min-width:600px){#app{padding:24px 20px 100px}.grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:19px}.event-card h3{font-size:17px}.hero{margin-top:25px}.hero-emoji{width:135px;height:135px}}
 @media(max-width:365px){#app{padding-left:9px;padding-right:9px}.grid{gap:10px}.event-card h3{font-size:14px}.tag{font-size:10px}.logo{width:48px;height:48px;flex-basis:48px}.brand{font-size:14px}.tabs button{font-size:13px}}
 @media(prefers-reduced-motion:reduce){button{transition:none}}
+
+
+/* Возвращаем большой стикер-календарь в центре афиши.
+   Только экран «Все встречи» / «Мои записи»: кнопки и логика не меняются. */
+.hero:has(+ .tabs) .hero-emoji {
+  width: 130px;
+  height: 130px;
+  margin: 2px auto 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(155deg, #d9fcff 0%, #a5eaff 55%, #87dafa 100%);
+  color: initial;
+  font-size: 68px;
+  line-height: 1;
+  border-radius: 24px;
+  box-shadow: 0 8px 18px rgba(12, 136, 255, .15);
+}
