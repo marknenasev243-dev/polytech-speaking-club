@@ -9,7 +9,7 @@ const statusLabel=s=>({pending:'⏳ На рассмотрении',approved:'✅
 const poster=e=>`<div class="poster">${e.image_url?`<img src="${esc(e.image_url)}" alt="Афиша мероприятия" loading="lazy" onerror="this.remove()">`:'<span class="fallback">🗣️</span>'}<span class="lang-flag">🇷🇺 🇬🇧</span></div>`;
 const cap=e=>Math.max(0,e.capacity-e.approved_count);
 const safeUser=u=>`<div class="avatar">${u.photo_url?`<img src="${esc(u.photo_url)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`:esc((u.first_name||'?').slice(0,1))}</div>`;
-const API_BASE='REPLACE_WITH_SUPABASE_FUNCTION_URL';
+const API_BASE='https://yprkajaeahnxcjuawjrz.supabase.co/functions/v1/club';
 async function api(url,method='GET',body){const headers={'X-Telegram-Init-Data':tg?.initData||''};if(body!==undefined)headers['Content-Type']='application/json';const r=await fetch(API_BASE+url,{method,headers,body:body===undefined?undefined:JSON.stringify(body)});let data;try{data=await r.json()}catch{data={error:'Не удалось прочитать ответ сервера'}}if(!r.ok)throw new Error(data.error||'Ошибка запроса');return data;}
 function toast(msg){document.querySelector('.toast')?.remove();const el=document.createElement('div');el.className='toast';el.textContent=msg;document.body.append(el);setTimeout(()=>el.remove(),3500)}
 function top(){return `<div class="top"><div class="brand"><span class="logo">🌍</span><span>Speaking Club<br><span class="smallnote">Московский Политех</span></span></div><span class="tag">Участие бесплатно</span></div>`}
