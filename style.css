@@ -90,3 +90,9 @@ button:focus-visible,[data-action="event"]:focus-visible{outline:3px solid #89bd
   border-radius: 25px !important;
   box-shadow: 0 8px 18px rgba(12,136,255,.15) !important;
 }
+/* Убираем иконку молнии с кнопки регистрации */
+button[data-action="register"]::before,
+button[data-action="register"]::after {
+  content: none !important;
+  display: none !important;
+}
