@@ -1,1 +1,75 @@
-<!doctype html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#ffffff"><title>Speaking Club · Московский Политех</title><link rel="stylesheet" href="./style.css?v=3"><script src="https://telegram.org/js/telegram-web-app.js"></script><script type="module" src="./app.js?v=2"></script></head><body><div id="app"><div class="loading">Загружаем Speaking Club…</div></div></body></html>
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <title>Polytech Speaking Club · Московский Политех</title>
+  <link rel="stylesheet" href="./style.css?v=loader-20261119">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script type="module" src="./app.js?v=loader-20261119"></script>
+  <style>
+    /* Только стартовый экран: исчезает автоматически, когда app.js заменяет #app */
+    #app > .psc-loading {
+      min-height: min(75vh, 760px);
+      min-height: min(75dvh, 760px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      text-align: center;
+      background: #fff;
+      color: #161b22;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    }
+    .psc-loading-wheel {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 166px;
+      height: 166px;
+      isolation: isolate;
+    }
+    .psc-loading-wheel::before {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      background: repeating-conic-gradient(from 0deg, #141414 0deg 4deg, transparent 4deg 11deg);
+      -webkit-mask: radial-gradient(farthest-side, transparent 78%, #000 80%, #000 92%, transparent 94%);
+      mask: radial-gradient(farthest-side, transparent 78%, #000 80%, #000 92%, transparent 94%);
+      animation: psc-wheel-spin 1.75s linear infinite;
+    }
+    .psc-loading-logo {
+      display: block;
+      width: 132px;
+      height: 132px;
+      object-fit: contain;
+      border-radius: 50%;
+      position: relative;
+      z-index: 1;
+    }
+    .psc-loading-caption {
+      font-size: 15px;
+      font-weight: 500;
+      color: #747a83;
+      letter-spacing: 0.01em;
+    }
+    @keyframes psc-wheel-spin {to {transform: rotate(360deg);}}
+    @media (prefers-reduced-motion: reduce) {
+      .psc-loading-wheel::before {animation: none;}
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="psc-loading" role="status" aria-live="polite" aria-label="Загружаем Speaking Club">
+      <div class="psc-loading-wheel" aria-hidden="true">
+        <img class="psc-loading-logo" src="./mospolytech-loader.png" alt="">
+      </div>
+      <div class="psc-loading-caption">Загружаем Speaking Club…</div>
+    </div>
+  </div>
+</body>
+</html>
