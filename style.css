@@ -96,3 +96,29 @@ button[data-action="register"]::after {
   content: none !important;
   display: none !important;
 }
+
+.hero:has(+ .tabs) .hero-emoji {
+  transform-origin: 50% 65%;
+  animation: speaking-calendar-float 3.6s ease-in-out infinite;
+}
+
+@keyframes speaking-calendar-float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translateY(-7px) rotate(-3deg) scale(1.025);
+  }
+  50% {
+    transform: translateY(-10px) rotate(0deg) scale(1.04);
+  }
+  75% {
+    transform: translateY(-5px) rotate(3deg) scale(1.025);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero:has(+ .tabs) .hero-emoji {
+    animation: none;
+  }
+}
