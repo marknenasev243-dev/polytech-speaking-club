@@ -160,3 +160,29 @@ button[data-action="register"]::after {
     will-change: auto;
   }
 }
+/* Неподвижный голубой квадрат */
+#app .hero .hero-emoji {
+  position: relative !important;
+  background: linear-gradient(155deg, #d4fbff, #91e0ff) !important;
+  background-image: linear-gradient(155deg, #d4fbff, #91e0ff) !important;
+  animation: none !important;
+  transform: none !important;
+  display: grid !important;
+  place-items: center !important;
+  font-size: 0 !important;
+}
+
+/* Анимированный блокнот */
+#app .hero .hero-emoji::after {
+  content: "" !important;
+  display: block !important;
+  width: 85% !important;
+  height: 85% !important;
+  background: url("./calendar-notebook.png") center / contain no-repeat !important;
+  animation: notebookMove 3s ease-in-out infinite !important;
+}
+
+@keyframes notebookMove {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-7px) rotate(5deg); }
+}
