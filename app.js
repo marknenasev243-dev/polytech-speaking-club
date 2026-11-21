@@ -260,7 +260,7 @@ async function loadRatingForSearch() {
   }
 }
 
-function setupParticipantSearch().
+function setupParticipantSearch() {
  
 if (state.view === 'admin-stats') {
   const panel = root.querySelector('.panel');
