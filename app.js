@@ -279,8 +279,9 @@ function setupParticipantSearch() {
       const term = input.value;
       rows.forEach((row, index) => {
         row.hidden = !searchName(
-          state.adminStats[index] || {},
-          term
+  state.adminStats[index] || {},
+  term
+);
         );
       });
     });
