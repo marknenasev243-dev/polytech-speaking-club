@@ -1,3 +1,4 @@
+
 const tg=window.Telegram?.WebApp;
 tg?.ready();tg?.expand();
 const root=document.getElementById('app');
@@ -76,49 +77,6 @@ else if(state.view==='participants'){
     </div>
   `;
 }
-
-      <h1>Участники встречи</h1>
-      <p class="muted">${e?.approved_count || 0} из ${e?.capacity || 0}</p>
-    </section>
-
-    <div class="filter">
-      <button data-action="filter" data-filter="all">Все</button>
-      <button data-action="filter" data-filter="ru">Русский</button>
-      <button data-action="filter" data-filter="en">Английский</button>
-    </div>
-
-    <div class="tables-grid">
-      ${state.tables.map(t => `
-        <div class="table-tile">
-          <b>Стол №${t.number}</b>
-          <span>${t.language ? langLabel(t.language) : 'Свободный'}</span>
-          <small>${t.count}/${t.capacity} мест</small>
-        </div>
-      `).join('')}
-    </div>
-
-    <div class="panel">
-      ${arr.length ? arr.map(p => `
-        <div class="person">
-          ${safeUser(p)}
-          <div class="person-info">
-            <div class="person-name">
-              ${esc([p.first_name, p.last_name].filter(Boolean).join(' ') || 'Участник')}
-            </div>
-            ${state.me?.is_admin
-              ? `<div class="person-sub">${p.username ? '@' + esc(p.username) : ''}</div>`
-              : `<div class="person-sub club-coins">${Number(p.club_coins ?? 0)} Club coin 🪙</div>`
-            }
-          </div>
-          <span class="language">
-            ${langLabel(p.language)}<br>Стол №${p.table_number ?? '—'}
-          </span>
-        </div>
-      `).join('') : '<div class="empty">Пока нет подтверждённых участников</div>'}
-    </div>
-  `;
-}
-
 else if(state.view==='admin'){html+=`<section class="hero"><div class="hero-emoji">⚙️</div><h1>Панель организатора</h1><p class="muted">Создание встреч и список записавшихся</p></section><button class="primary" data-action="create">+ Создать встречу</button><button class="secondary" data-action="admin-stats">🏆 Статистика участников</button>${state.me?.is_owner?'<button class="secondary" data-action="organizers">👥 Управление организаторами</button>':''}${
 state.events.filter(e =>
   e.status !== 'cancelled' ||
