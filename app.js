@@ -1,3 +1,5 @@
+
+
 const tg=window.Telegram?.WebApp;
 tg?.ready();tg?.expand();
 const root=document.getElementById('app');
