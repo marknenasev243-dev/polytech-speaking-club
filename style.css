@@ -278,3 +278,18 @@ button[data-action="register"]::after {
 .club-coins-link:active {
   opacity: 0.65;
 }
+
+/* Медаль вместо блокнота только в «Моих посещениях» */
+#app .hero.stats-hero .hero-emoji {
+  font-size: 72px !important;
+  line-height: 132px !important;
+  color: #171a20 !important;
+  -webkit-text-fill-color: initial !important;
+  background-image: none !important;
+}
+
+#app .hero.stats-hero .hero-emoji::before,
+#app .hero.stats-hero .hero-emoji::after {
+  content: none !important;
+  display: none !important;
+}
