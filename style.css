@@ -417,222 +417,120 @@ html[data-winter-theme="light"] body::before {
 html[data-winter-theme="dark"] body::before {
   background-image: url('./winter-dark-wreath.webp') !important;
 }
-/* The original star is baked into each background: never draw another star. */
-#app .hero:has(+ .tabs) { position: relative; }
+
+/* ==============================================================
+   WINTER STAR: aligned transparent theme switch + subtle sparkles
+   Existing star and wreath stay IN the background pictures.
+   This block replaces conflicting switch CSS, not other styles.
+   =============================================================== */
+
 #app .winter-theme-switch {
+  --wreath-diameter: 68px;
   position: fixed !important;
-  left: calc(11.5vw - 46px) !important;
-  top: calc(20.1vh - 36px) !important;
-  width: 92px !important;
-  min-height: 100px !important;
+  left: 11.4vw; /* JS synchronizes with background crop/scaling */
+  top: 20.4vh;
+  width: 82px;
+  height: 82px;
+  transform: translate(-50%, -50%) !important;
+  margin: 0 !important;
   padding: 0 !important;
-  border: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  z-index: 15 !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: flex-start !important;
-  gap: 4px !important;
-  cursor: pointer;
-  transform: none !important;
-  -webkit-tap-highlight-color: transparent;
-}
-#app .winter-theme-switch .winter-theme-star {
-  display: block !important;
-  width: 76px !important;
-  height: 76px !important;
-  flex: 0 0 76px !important;
-  clip-path: none !important;
-  background: none !important;
   border: 0 !important;
   border-radius: 50% !important;
-  filter: none !important;
-  animation: none !important;
-}
-#app .winter-theme-switch::before { content: none !important; display: none !important; }
-#app .winter-theme-switch .winter-theme-label {
-  position: relative !important;
-  display: block !important;
-  margin: 0 !important;
-  padding: 3px 7px !important;
-  font: 700 10px/1.3 -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif !important;
-  white-space: nowrap !important;
-  background: rgba(239, 248, 255, .95) !important;
-  color: #184c7d !important;
-  border: 1px solid rgba(147, 192, 235, .88) !important;
-  border-radius: 99px !important;
-  box-shadow: 0 2px 7px rgba(10, 45, 89, .22) !important;
-}
-#app .winter-theme-switch:focus-visible {
-  outline: 2px solid #e7f6ff !important;
-  outline-offset: 2px !important;
-  border-radius: 14px !important;
-}
-/* On desktop, when background-size:cover applies, position needs visual checking. */
-
-/* =====================================
-   ЗВЕЗДА — ПЕРЕКЛЮЧАТЕЛЬ ЗИМНЕЙ ТЕМЫ
-   Звезда остаётся частью фоновой картинки
-   ===================================== */
-
-#app .winter-theme-switch {
-  position: fixed !important;
-
-  /* Центр прозрачной кнопки над звездой */
-  left: 11.5vw !important;
-  top: 20vh !important;
-
-  transform: translate(-50%, -50%) !important;
-
-  width: 100px !important;
-  height: 108px !important;
-  min-height: 0 !important;
-
-  padding: 0 !important;
-  margin: 0 !important;
-
-  border: none !important;
   background: transparent !important;
   box-shadow: none !important;
-
-  z-index: 20 !important;
-  cursor: pointer;
   overflow: visible !important;
-
-  display: flex !important;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
+  z-index: 30 !important;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
-/* Убираем отдельную нарисованную звезду */
-#app .winter-theme-switch .winter-theme-star {
-  display: none !important;
-}
-
-/* Прозрачная светящаяся гирлянда */
-#app .winter-theme-lights {
-  position: relative;
-  display: block;
-
-  width: 78px;
-  height: 78px;
-  flex-shrink: 0;
-
+/* Delicate dotted highlight, exactly over the wreath already in the picture */
+#app .winter-theme-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--wreath-diameter);
+  height: var(--wreath-diameter);
+  transform: translate(-50%, -50%);
+  border: 1px dotted rgba(255, 244, 216, .68);
   border-radius: 50%;
-
-  background:
-    repeating-conic-gradient(
-      from 0deg,
-      rgba(255, 243, 204, .95) 0deg 5deg,
-      transparent 5deg 30deg
-    );
-
-  -webkit-mask:
-    radial-gradient(
-      farthest-side,
-      transparent calc(100% - 6px),
-      #000 calc(100% - 5px)
-    );
-
-  mask:
-    radial-gradient(
-      farthest-side,
-      transparent calc(100% - 6px),
-      #000 calc(100% - 5px)
-    );
-
-  opacity: .15;
+  opacity: .28;
+  box-shadow: 0 0 7px rgba(255, 229, 159, .18);
   pointer-events: none;
 }
-
-/* Светлая тема: белые огоньки */
-html[data-winter-theme="light"]
-#app .winter-theme-lights {
-  background:
-    repeating-conic-gradient(
-      from 0deg,
-      #ffffff 0deg 5deg,
-      transparent 5deg 30deg
-    );
+html[data-winter-theme="light"] #app .winter-theme-ring {
+  border-color: rgba(255, 255, 255, .94);
+  box-shadow: 0 0 7px rgba(255, 255, 255, .23);
 }
 
-/* Тёмная тема: тёплые огоньки */
-html[data-winter-theme="dark"]
-#app .winter-theme-lights {
-  background:
-    repeating-conic-gradient(
-      from 0deg,
-      #ffe5a1 0deg 5deg,
-      transparent 5deg 30deg
-    );
-}
-
-/* Подпись под звездой */
+/* Caption stays below the existing star & wreath */
 #app .winter-theme-label {
-  display: block !important;
-  margin-top: 0 !important;
-  padding: 3px 6px !important;
-
-  font-size: 10px !important;
-  font-weight: 700 !important;
-  line-height: 1.2 !important;
-  white-space: nowrap !important;
-
-  color: #ffffff !important;
-  background: rgba(16, 52, 99, .58) !important;
-
-  border: 1px solid rgba(255,255,255,.5) !important;
-  border-radius: 10px !important;
-
-  text-shadow: 0 1px 2px rgba(0,0,0,.4);
+  position: absolute;
+  left: 50%;
+  top: calc(50% + var(--wreath-diameter) / 2 + 6px);
+  transform: translateX(-50%);
+  display: block;
+  width: max-content;
+  max-width: 96px;
+  padding: 3px 7px;
+  border: 1px solid rgba(156, 200, 240, .85);
+  border-radius: 999px;
+  background: rgba(240, 249, 255, .95);
+  color: #164e80;
+  font: 700 10px/1.25 -apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
+  text-align: center;
+  white-space: nowrap;
+  text-shadow: none;
+  box-shadow: 0 2px 6px rgba(7, 38, 75, .18);
   pointer-events: none;
 }
 
-/* При нажатии огоньки бегут по кругу */
-#app .winter-theme-switch.is-flashing
-.winter-theme-lights {
-  animation:
-    wreathSpin .9s ease-in-out,
-    wreathBlink .25s ease-in-out 4;
+/* No second star and no painted garland over the background */
+#app .winter-theme-star,
+#app .winter-theme-lights { display: none !important; }
 
-  opacity: 1 !important;
+/* 12 subtle sparks from the existing star, for one click only */
+#app .winter-sparkle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--spark-size, 5px);
+  height: var(--spark-size, 5px);
+  margin-left: calc(var(--spark-size, 5px) / -2);
+  margin-top: calc(var(--spark-size, 5px) / -2);
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0 30%, #ffe9a3 45%, rgba(255,221,145,0) 78%);
+  box-shadow: 0 0 5px rgba(255,255,255,.55);
+  opacity: 0;
+  transform: translate(0, 0) scale(.45);
+  animation: winterStarSparkle .72s ease-out var(--spark-delay, 0ms) forwards;
+  pointer-events: none;
+}
+#app .winter-sparkle:nth-of-type(even) {
+  background: radial-gradient(circle, #fff 0 38%, #e1f4ff 50%, transparent 80%);
 }
 
-/* Вращение огоньков */
-@keyframes wreathSpin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+#app .winter-theme-switch.is-sparkling .winter-theme-ring {
+  animation: winterWreathAccent .7s ease-out both;
 }
-
-/* Мерцание гирлянды */
-@keyframes wreathBlink {
-  0%, 100% {
-    opacity: .45;
-    filter: brightness(1);
-  }
-  50% {
-    opacity: 1;
-    filter: brightness(1.8);
-  }
+@keyframes winterWreathAccent {
+  0% { opacity: .24; filter: brightness(1); }
+  35% { opacity: .8; filter: brightness(1.5); }
+  100% { opacity: .28; filter: brightness(1); }
 }
-
-/* Сама кнопка не двигается */
-#app .winter-theme-switch.is-flashing {
-  transform: translate(-50%, -50%) !important;
+@keyframes winterStarSparkle {
+  0% { opacity: 0; transform: translate(0,0) scale(.3); }
+  18% { opacity: .8; }
+  100% { opacity: 0; transform: translate(var(--dx),var(--dy)) scale(.95); }
 }
-
-/* Учитываем настройки доступности */
+#app .winter-theme-switch:focus-visible {
+  outline: 2px solid #fff5c9 !important;
+  outline-offset: 4px !important;
+}
 @media (prefers-reduced-motion: reduce) {
-  #app .winter-theme-switch.is-flashing
-  .winter-theme-lights {
+  #app .winter-sparkle,
+  #app .winter-theme-switch.is-sparkling .winter-theme-ring {
     animation: none !important;
-    opacity: 1 !important;
   }
 }
