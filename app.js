@@ -216,6 +216,150 @@ if (state.view === 'requests') {
   });
 }
 }
+
+/* Поиск участников и поиск по общему рейтингу */
+
+let ratingSearchCache = null;
+
+function searchName(person, term) {
+  const name = [person.first_name, person.last_name]
+    .filter(Boolean)
+    .join(' ')
+    .toLocaleLowerCase('ru')
+    .replace(/ё/g, 'е');
+
+  return name.includes(
+    term.trim().toLocaleLowerCase('ru').replace(/ё/g, 'е')
+  );
+}
+
+async function loadRatingForSearch() {
+  if (ratingSearchCache) return ratingSearchCache;
+
+  ratingSearchCache = (async () => {
+    const players = [];
+
+    for (let offset = 0; offset < 10000; offset += 50) {
+      const data = await api(
+        `/api/leaderboard?offset=${offset}&limit=50`
+      );
+
+      players.push(...(data.players || []));
+
+      if (!data.has_more) break;
+    }
+
+    return players;
+  })();
+
+  try {
+    return await ratingSearchCache;
+  } catch (error) {
+    ratingSearchCache = null;
+    throw error;
+  }
+}
+
+function setupParticipantSearch() {
+  if (state.view === 'admin-stats') {
+    const panel = root.querySelector('.panel');
+    if (!panel) return;
+
+    const input = document.createElement('input');
+    input.type = 'search';
+    input.className = 'control club-search';
+    input.placeholder = '🔎 Поиск участника по имени';
+    input.setAttribute('aria-label', 'Поиск участника');
+
+    panel.before(input);
+
+    const rows = [...panel.querySelectorAll('.person')];
+
+    input.addEventListener('input', () => {
+      const term = input.value;
+      rows.forEach((row, index) => {
+        row.hidden = !searchName(
+          state.adminStats[index] || {},
+          term
+        );
+      });
+    });
+  }
+
+  if (state.view === 'my-stats') {
+    const heading = [...root.querySelectorAll('h2')]
+      .find(h => h.textContent.includes('Топ-5 участников'));
+
+    if (!heading) return;
+
+    const input = document.createElement('input');
+    input.type = 'search';
+    input.className = 'control club-search';
+    input.placeholder = '🔎 Найти участника в рейтинге';
+    input.setAttribute('aria-label', 'Поиск в рейтинге');
+
+    const results = document.createElement('div');
+    results.className = 'panel club-search-results';
+    results.hidden = true;
+
+    heading.before(input);
+    input.after(results);
+
+    let version = 0;
+
+    input.addEventListener('input', async () => {
+      const term = input.value.trim();
+      const currentVersion = ++version;
+
+      if (!term) {
+        results.hidden = true;
+        results.innerHTML = '';
+        return;
+      }
+
+      results.hidden = false;
+      results.textContent = 'Ищем участника...';
+
+      try {
+        const players = await loadRatingForSearch();
+
+        if (currentVersion !== version ||
+            !root.contains(results)) return;
+
+        const found = players.filter(
+          p => searchName(p, term)
+        );
+
+        results.innerHTML = found.length
+          ? found.map(p => `
+              <div class="person">
+                <div class="person-info">
+                  <div class="person-name">
+                    ${esc([
+                      p.first_name,
+                      p.last_name
+                    ].filter(Boolean).join(' ') || 'Участник')}
+                  </div>
+                  <div class="person-sub">
+                    Место №${Number(p.place)}
+                  </div>
+                </div>
+                <b>${toClubCoin(Number(p.visits || 0))} 🪙</b>
+              </div>
+            `).join('')
+          : '<div class="empty">Ничего не найдено</div>';
+
+      } catch (error) {
+        if (currentVersion === version &&
+            root.contains(results)) {
+          results.textContent =
+            'Не удалось загрузить рейтинг: ' + error.message;
+        }
+      }
+    });
+  }
+}
+
 async function refresh(){const r=await api('/api/events');state.events=r.events;render()}
 async function participants(){const data=await api(`/api/events/${state.selected}/participants`);state.participants=data.participants;state.tables=data.tables;state.filter='all';state.view='participants';render()}
 async function requests(){state.adminRegs=(await api(`/api/admin/events/${state.selected}/registrations`)).registrations;state.view='requests';render()}
