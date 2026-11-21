@@ -534,3 +534,129 @@ body > .winter-theme-switch:focus-visible {
   body > .winter-theme-switch .winter-sparkle,
   body > .winter-theme-switch.is-sparkling .winter-theme-ring { animation: none !important; }
 }
+/* Polytech Speaking Club — контрастный текст для двух зимних тем.
+   Добавить ПОСЛЕ всех предыдущих стилей в конец style.css.
+   Не меняет фоновые картинки, иконки, кнопки, карточки и JavaScript. */
+
+/* Светлая тема (в том числе до запуска переключателя). */
+:root,
+html[data-winter-theme="light"] {
+  --winter-title-glass: rgba(255, 255, 255, .87);
+  --winter-small-glass: rgba(255, 255, 255, .60);
+  --winter-glass-border: rgba(255, 255, 255, .88);
+  --winter-glass-title: #15304c;
+  --winter-glass-small: #38536d;
+  --winter-glass-shadow: 0 4px 17px rgba(13, 53, 95, .12);
+}
+
+/* Тёмная тема: синий полупрозрачный фон и светлые буквы. */
+html[data-winter-theme="dark"] {
+  --winter-title-glass: rgba(12, 37, 75, .88);
+  --winter-small-glass: rgba(13, 42, 82, .68);
+  --winter-glass-border: rgba(160, 203, 245, .35);
+  --winter-glass-title: #ffffff;
+  --winter-glass-small: #e1efff;
+  --winter-glass-shadow: 0 5px 18px rgba(4, 16, 39, .27);
+}
+
+/* Крупные заголовки, которые находятся прямо на зимнем фоне. */
+#app .hero h1,
+#app .hero h2,
+#app .detail h1,
+#app .section-title,
+#app > h1,
+#app > h2,
+#app > h3 {
+  width: fit-content;
+  max-width: 100%;
+  padding: 9px 15px !important;
+  border: 1px solid var(--winter-glass-border) !important;
+  border-radius: 16px !important;
+  background: var(--winter-title-glass) !important;
+  color: var(--winter-glass-title) !important;
+  box-shadow: var(--winter-glass-shadow) !important;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  text-shadow: none !important;
+  overflow-wrap: anywhere;
+}
+
+/* Выравнивание заголовков внутри центральных блоков. */
+#app .hero h1,
+#app .hero h2,
+#app .detail h1 {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Мелкий текст — менее заметные, минимальные подложки. */
+#app .hero p,
+#app .detail .meta,
+#app .detail .location,
+#app > .muted,
+#app > .smallnote,
+#app .clubcoin-info {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 6px 10px !important;
+  border: 1px solid var(--winter-glass-border) !important;
+  border-radius: 11px !important;
+  background: var(--winter-small-glass) !important;
+  color: var(--winter-glass-small) !important;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  text-shadow: none !important;
+  overflow-wrap: anywhere;
+}
+
+/* Название и подзаголовок клуба — одна аккуратная стеклянная подложка. */
+#app .top .brand {
+  padding: 5px 9px;
+  background: var(--winter-title-glass) !important;
+  color: var(--winter-glass-title) !important;
+  border: 1px solid var(--winter-glass-border) !important;
+  border-radius: 15px;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--winter-glass-shadow) !important;
+}
+#app .top .brand .smallnote,
+#app .top .brand small {
+  color: var(--winter-glass-small) !important;
+}
+
+/* Статистика: общий матовый блок тоже соответствует теме,
+   включая прежние белые правила с !important. */
+#app .hero.stats-hero {
+  background: var(--winter-title-glass) !important;
+  color: var(--winter-glass-title) !important;
+  border: 1px solid var(--winter-glass-border) !important;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+/* Текст описания мероприятия внутри его информационного блока. */
+#app .detail .description {
+  background: var(--winter-title-glass) !important;
+  color: var(--winter-glass-title) !important;
+  border: 1px solid var(--winter-glass-border) !important;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+/* Карточки, поля ввода, кнопки, фотографии, аватары, логотип,
+   значки и золотая звезда-переключатель намеренно не затрагиваются. */
+
+@media (prefers-reduced-transparency: reduce) {
+  :root, html[data-winter-theme="light"] {
+    --winter-title-glass: #ffffff;
+    --winter-small-glass: #f0f8ff;
+  }
+  html[data-winter-theme="dark"] {
+    --winter-title-glass: #102d54;
+    --winter-small-glass: #203e65;
+  }
+}
