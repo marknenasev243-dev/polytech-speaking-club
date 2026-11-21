@@ -340,13 +340,13 @@ button[data-action="register"]::after {
 /* ============================================================
    Polytech Speaking Club | Уютная зимняя тема — вариант №2
    Только оформление. Не меняет размеры, кнопки, иконки и логику.
-   Фоновый файл: winter-speaking-background.png
+   Фоновый файл: winter-cozy-realistic.webp
    ============================================================ */
-:root { color-scheme: light; background: #e5f2ff; }
-html { min-height: 100%; background: #e5f2ff; }
+:root { color-scheme: light; background: #d8eafa; }
+html { min-height: 100%; background: #d8eafa; }
 body {
   min-height: 100vh;
-  background: #e5f2ff;
+  background: #d8eafa;
   position: relative;
   isolation: isolate;
 }
@@ -355,15 +355,15 @@ body::before {
   content: "";
   position: fixed;
   inset: 0;
-  z-index: -1;
+  z-index: 0;
   pointer-events: none;
-  background-color: #dcecff;
-  background-image: url('./winter-speaking-background.png');
-  background-position: center center;
+  background-color: #d5eaff;
+  background-image: url('./winter-cozy-realistic.webp');
+  background-position: center top;
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: 100% 100%;
 }
-#app { background: transparent !important; }
+#app { background: transparent !important; position: relative; z-index: 1; }
 /* Пропускаем зимний фон через большие белые области */
 #app .top, #app .hero, #app .detail {
   background: transparent !important;
@@ -372,7 +372,7 @@ body::before {
 /* Поверх фона карточки и тексты остаются читабельными */
 #app .event-card, #app .panel, #app .admin-card,
 #app .tables-grid .table-tile, #app .detail .description {
-  background-color: rgba(255,255,255,.93);
+  background-color: rgba(255,255,255,.92);
   -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
 }
@@ -394,4 +394,12 @@ body::before {
 /* Уважение к системным настройкам доступности */
 @media (prefers-reduced-transparency: reduce) {
   #app .event-card, #app .panel, #app .admin-card { background: #fff; }
+}
+
+/* Оформление с реальным зимним изображением вместо схематичных рисунков. */
+@media(min-width:850px) {
+  body::before {
+    background-size: cover;
+    background-position: center 38%;
+  }
 }
