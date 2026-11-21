@@ -448,11 +448,13 @@ body > .winter-theme-switch {
   transition: opacity .18s ease, visibility .18s ease;
 }
 /* Когда другое управление перекрывает звезду, кнопка уступает место. */
+
 body > .winter-theme-switch.winter-theme-obstructed {
-  opacity: 0 !important;
-  visibility: hidden !important;
+  opacity: 1 !important;
+  visibility: visible !important;
   pointer-events: none !important;
 }
+
 body > .winter-theme-switch .winter-theme-ring {
   position: absolute;
   left: 50%;
