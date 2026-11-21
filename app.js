@@ -278,10 +278,18 @@ function setupParticipantSearch() {
     input.addEventListener('input', () => {
       const term = input.value;
       rows.forEach((row, index) => {
-        row.hidden = !searchName(
+       
+const matches = searchName(
   state.adminStats[index] || {},
   term
 );
+
+if (matches) {
+  row.style.removeProperty('display');
+} else {
+  row.style.setProperty('display', 'none', 'important');
+}
+
         
       });
     });
