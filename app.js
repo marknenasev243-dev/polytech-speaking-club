@@ -36,7 +36,36 @@ else if(state.view==='organizers'){
 else if(state.view==='admin-stats'){
   html+=`<button class="back" data-action="admin">‹ Назад</button><section class="hero"><div class="hero-emoji">🏆</div><h1>Статистика посещений</h1><p class="muted">Все участники · завершённые встречи</p></section><div class="panel">${state.adminStats.length?state.adminStats.map(u=>`<div class="person">${safeUser(u)}<div class="person-info"><div class="person-name">${esc([u.first_name,u.last_name].filter(Boolean).join(' ')||'Участник')}</div><div class="person-sub">${u.username?'@'+esc(u.username):'Telegram ID: '+u.id}</div></div><b>${u.visits} 🏅</b></div>`).join(''):'<div class="empty">Участников пока нет</div>'}</div>${nav()}`;
 }
-root.innerHTML=html;}
+
+root.innerHTML = html;
+
+if (state.view === 'requests') {
+  const cards = root.querySelectorAll('.admin-reg');
+
+  cards.forEach((card, i) => {
+    const participant = state.adminRegs[i];
+    if (!participant) return;
+
+    if (!['approved', 'pending'].includes(participant.status)) {
+      return;
+    }
+
+    const event = state.events.find(
+      e => e.id === state.selected
+    );
+
+    if (event?.status !== 'published') return;
+
+    const button = document.createElement('button');
+    button.className = 'danger small';
+    button.dataset.action = 'admin-cancel';
+    button.dataset.id = String(participant.user_id);
+    button.textContent = 'Отменить запись';
+
+    card.appendChild(button);
+  });
+}
+}
 async function refresh(){const r=await api('/api/events');state.events=r.events;render()}
 async function participants(){const data=await api(`/api/events/${state.selected}/participants`);state.participants=data.participants;state.tables=data.tables;state.filter='all';state.view='participants';render()}
 async function requests(){state.adminRegs=(await api(`/api/admin/events/${state.selected}/registrations`)).registrations;state.view='requests';render()}
