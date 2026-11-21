@@ -1,147 +1,176 @@
-
 (() => {
   'use strict';
 
-  // Keep the existing remembered choice. Default is the light image.
-  const STORAGE_KEY = 'polytech-winter-theme-v5';
-  const ROOT = document.documentElement;
+  // Сохраняем текущую настройку темы из предыдущей рабочей версии.
+  const KEY = 'polytech-winter-theme-v5';
+  const root = document.documentElement;
   const IMAGE_WIDTH = 941;
   const IMAGE_HEIGHT = 1672;
-  // Approximate center and outer wreath diameter in the supplied WebP images.
+  // Координаты звезды и ширина венка в обеих одинаково скомпонованных картинках.
   const STAR_X = 0.115;
   const STAR_Y = 0.204;
   const WREATH_WIDTH = 0.139;
 
   let theme = 'light';
   let switching = false;
-  let switchTimer = 0;
+  let button = null;
+  let frame = 0;
 
-  try {
-    if (localStorage.getItem(STORAGE_KEY) === 'dark') theme = 'dark';
-  } catch (_) {}
-
-  const applyTheme = () => {
-    ROOT.setAttribute('data-winter-theme', theme);
-  };
+  try { if (localStorage.getItem(KEY) === 'dark') theme = 'dark'; } catch (_) {}
+  const applyTheme = () => root.setAttribute('data-winter-theme', theme);
   applyTheme();
 
-  function findPosterHero(app) {
-    return [...app.querySelectorAll('.hero')].find(
-      node => node.nextElementSibling?.classList.contains('tabs')
-    );
-  }
+  function positionToBackground() {
+    if (!button) return;
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    let imageW = w, imageH = h, originX = 0, originY = 0;
 
-  function positionSwitch(button) {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    let imageWidth = width;
-    let imageHeight = height;
-    let originX = 0;
-    let originY = 0;
-
-    // style.css uses background-size:cover and center 38% at >=850px.
-    // Under 850px it stretches the image to 100% of the viewport.
+    // Повторяем точную геометрию body::before из существующего style.css.
     if (window.matchMedia('(min-width: 850px)').matches) {
-      const scale = Math.max(width / IMAGE_WIDTH, height / IMAGE_HEIGHT);
-      imageWidth = IMAGE_WIDTH * scale;
-      imageHeight = IMAGE_HEIGHT * scale;
-      originX = (width - imageWidth) / 2;
-      originY = (height - imageHeight) * 0.38;
+      const scale = Math.max(w / IMAGE_WIDTH, h / IMAGE_HEIGHT);
+      imageW = IMAGE_WIDTH * scale;
+      imageH = IMAGE_HEIGHT * scale;
+      originX = (w - imageW) / 2;
+      originY = (h - imageH) * 0.38;
     }
 
-    const x = originX + STAR_X * imageWidth;
-    const y = originY + STAR_Y * imageHeight;
-    const diameter = Math.max(42, WREATH_WIDTH * imageWidth);
-    const hitSize = Math.max(72, diameter + 14);
-
-    // The winter image is fixed to the viewport, but the click target should
-    // belong to the document. Convert the initial viewport coordinates into
-    // local coordinates in #app; then it scrolls away with the page.
-    const app = button.closest('#app');
-    if (!app) return;
-    const appRect = app.getBoundingClientRect();
-    button.style.setProperty('left', `${x - appRect.left}px`, 'important');
-    button.style.setProperty('top', `${y - appRect.top}px`, 'important');
-    button.style.setProperty('width', `${hitSize}px`, 'important');
-    button.style.setProperty('height', `${hitSize}px`, 'important');
+    const x = originX + STAR_X * imageW;
+    const y = originY + STAR_Y * imageH;
+    const diameter = Math.max(44, WREATH_WIDTH * imageW);
+    const size = Math.max(62, diameter + 10);
+    button.style.left = `${x}px`;
+    button.style.top = `${y}px`;
+    button.style.width = `${size}px`;
+    button.style.height = `${size}px`;
     button.style.setProperty('--wreath-diameter', `${diameter}px`);
   }
 
-  function emitSparkles(button) {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const count = 12;
-    const size = Math.max(30, Math.min(51, button.offsetWidth * 0.48));
-    for (let i = 0; i < count; i += 1) {
-      const sparkle = document.createElement('span');
-      sparkle.className = 'winter-sparkle';
-      const angle = (i / count) * Math.PI * 2;
-      const length = size * (0.72 + (i % 3) * 0.13);
-      sparkle.style.setProperty('--dx', `${Math.cos(angle) * length}px`);
-      sparkle.style.setProperty('--dy', `${Math.sin(angle) * length}px`);
-      sparkle.style.setProperty('--spark-size', `${3 + i % 3}px`);
-      sparkle.style.setProperty('--spark-delay', `${(i % 4) * 25}ms`);
-      button.appendChild(sparkle);
-      sparkle.addEventListener('animationend', () => sparkle.remove(), { once: true });
+  function intersection(a, b, padding = 0) {
+    return a.left < b.right + padding && a.right > b.left - padding &&
+           a.top < b.bottom + padding && a.bottom > b.top - padding;
+  }
+
+  function updateObstructions() {
+    if (!button || !document.body.contains(button)) return;
+    const star = button.getBoundingClientRect();
+    const diameter = parseFloat(button.style.getPropertyValue('--wreath-diameter')) || 60;
+    const label = button.querySelector('.winter-theme-label');
+    const labelRect = label?.getBoundingClientRect();
+
+    // Управляющие элементы важнее переключателя фона. Это предотвращает
+    // перекрытие вкладок, кнопок, ссылок и полей ввода при прокрутке.
+    const interactive = document.querySelectorAll(
+      '#app button, #app a, #app input, #app select, #app textarea, #app .event-card'
+    );
+    const starCore = {
+      left: star.left + (star.width - diameter * .78) / 2,
+      right: star.right - (star.width - diameter * .78) / 2,
+      top: star.top + (star.height - diameter * .78) / 2,
+      bottom: star.bottom - (star.height - diameter * .78) / 2
+    };
+    let obstructed = false;
+    for (const el of interactive) {
+      const rect = el.getBoundingClientRect();
+      if (rect.width && rect.height && intersection(starCore, rect, 3)) {
+        obstructed = true;
+        break;
+      }
+    }
+    button.classList.toggle('winter-theme-obstructed', obstructed);
+
+    // Подпись компактная; если она накрывает читаемый текст, скрываем лишь её.
+    let labelBlocked = false;
+    if (labelRect) {
+      const readable = document.querySelectorAll(
+        '#app .brand, #app .tag, #app .hero h1, #app .hero p, '
+        + '#app .detail h1, #app .detail .meta, #app .detail .location, '
+        + '#app .section-title, #app h2, #app h3, #app .person-name, '
+        + '#app .notice, #app .back, #app .tabs, #app .menu'
+      );
+      for (const el of readable) {
+        const rect = el.getBoundingClientRect();
+        if (rect.width && rect.height && intersection(labelRect, rect, 3)) {
+          labelBlocked = true;
+          break;
+        }
+      }
+    }
+    button.classList.toggle('winter-label-obstructed', labelBlocked);
+  }
+
+  function scheduleProtection() {
+    if (frame) return;
+    frame = requestAnimationFrame(() => {
+      frame = 0;
+      updateObstructions();
+    });
+  }
+
+  function emitSparkles() {
+    if (!button || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    for (let i = 0; i < 10; i += 1) {
+      const p = document.createElement('span');
+      p.className = 'winter-sparkle';
+      const angle = i * Math.PI / 5;
+      const distance = 24 + (i % 3) * 6;
+      p.style.setProperty('--dx', `${Math.cos(angle) * distance}px`);
+      p.style.setProperty('--dy', `${Math.sin(angle) * distance}px`);
+      p.style.setProperty('--spark-size', `${3 + i % 3}px`);
+      p.style.setProperty('--spark-delay', `${i % 3 * 25}ms`);
+      button.appendChild(p);
+      p.addEventListener('animationend', () => p.remove(), { once: true });
     }
   }
 
-  function toggleTheme(button) {
-    if (switching) return;
+  function toggleTheme() {
+    if (switching || !button) return;
     switching = true;
-    emitSparkles(button);
+    emitSparkles();
     button.classList.remove('is-sparkling');
     void button.offsetWidth;
     button.classList.add('is-sparkling');
-
-    // Keep the slight transition delay from the working previous switch.
-    window.clearTimeout(switchTimer);
-    switchTimer = window.setTimeout(() => {
+    window.setTimeout(() => {
       theme = theme === 'light' ? 'dark' : 'light';
       applyTheme();
-      try { localStorage.setItem(STORAGE_KEY, theme); } catch (_) {}
+      try { localStorage.setItem(KEY, theme); } catch (_) {}
     }, 240);
     window.setTimeout(() => {
-      button.classList.remove('is-sparkling');
+      button?.classList.remove('is-sparkling');
       switching = false;
-    }, 820);
+    }, 740);
   }
 
   function ensureButton() {
-    const app = document.getElementById('app');
-    if (!app) return;
-    const hero = findPosterHero(app);
-    let button = app.querySelector('.winter-theme-switch');
-
-    if (!hero) {
-      button?.remove();
-      return;
-    }
-    if (!button) {
-      button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'winter-theme-switch';
-      button.setAttribute('aria-label', 'Смена темы');
-      button.setAttribute('title', 'Смена темы');
-      button.innerHTML = '<span class="winter-theme-ring" aria-hidden="true"></span><span class="winter-theme-label">Смена темы</span>';
-      button.addEventListener('click', () => toggleTheme(button));
-      app.appendChild(button);
-    }
-    positionSwitch(button);
+    // Всегда в body: #app заменяется при переходах по вкладкам и может
+    // перемещаться при прокрутке. Звезда же встроена в фиксированный фон.
+    if (button && document.body.contains(button)) return;
+    button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'winter-theme-switch';
+    button.setAttribute('aria-label', 'Смена темы');
+    button.setAttribute('title', 'Смена темы');
+    button.innerHTML = '<span class="winter-theme-ring" aria-hidden="true"></span>'
+      + '<span class="winter-theme-label">Смена темы</span>';
+    button.addEventListener('click', toggleTheme);
+    document.body.appendChild(button);
+    positionToBackground();
+    scheduleProtection();
   }
 
   function start() {
     ensureButton();
-    const app = document.getElementById('app');
-    if (app) new MutationObserver(ensureButton).observe(app, { childList: true });
     window.addEventListener('resize', () => {
-      const button = document.querySelector('#app .winter-theme-switch');
-      if (button && Math.abs(window.scrollY || 0) < 5) positionSwitch(button);
+      positionToBackground();
+      scheduleProtection();
     }, { passive: true });
+    window.addEventListener('scroll', scheduleProtection, { passive: true });
+    // Поддержка Telegram: при смене вкладки app.js перерисовывает содержимое.
+    const app = document.getElementById('app');
+    if (app) new MutationObserver(scheduleProtection).observe(app, { childList: true });
   }
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', start, { once: true });
-  } else {
-    start();
-  }
+  } else start();
 })();
