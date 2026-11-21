@@ -260,40 +260,48 @@ async function loadRatingForSearch() {
   }
 }
 
+function setupParticipantSearch().
+ 
 if (state.view === 'admin-stats') {
-  if (state.view === 'admin-stats') {
-    const panel = root.querySelector('.panel');
-    if (!panel) return;
+  const panel = root.querySelector('.panel');
+  if (!panel) return;
 
-    const input = document.createElement('input');
-    input.type = 'search';
-    input.className = 'control club-search';
-    input.placeholder = '🔎 Поиск участника по имени';
-    input.setAttribute('aria-label', 'Поиск участника');
+  const input = document.createElement('input');
+  input.type = 'search';
+  input.className = 'control club-search';
+  input.placeholder = '🔎 Поиск по имени или username';
+  input.setAttribute('aria-label', 'Поиск участника');
 
-    panel.before(input);
+  panel.before(input);
 
-    const rows = [...panel.querySelectorAll('.person')];
+  const rows = Array.from(panel.querySelectorAll('.person'));
 
-    input.addEventListener('input', () => {
-      const term = input.value;
-      rows.forEach((row, index) => {
-       
-const matches = searchName(
-  state.adminStats[index] || {},
-  term
-);
+  const normalize = value => String(value ?? '')
+    .toLocaleLowerCase('ru')
+    .replace(/ё/g, 'е')
+    .trim();
 
-if (matches) {
-  row.style.removeProperty('display');
-} else {
-  row.style.setProperty('display', 'none', 'important');
+  input.addEventListener('input', () => {
+    const term = normalize(input.value);
+
+    const found = rows.filter(row => {
+      const name = row.querySelector('.person-name')?.textContent || '';
+      const username = row.querySelector('.person-sub')?.textContent || '';
+
+      return normalize(name + ' ' + username).includes(term);
+    });
+
+    if (found.length) {
+      panel.replaceChildren(...found);
+    } else {
+      const empty = document.createElement('div');
+      empty.className = 'empty';
+      empty.textContent = 'Участники не найдены';
+      panel.replaceChildren(empty);
+    }
+  });
 }
 
-        
-      });
-    });
-  }
 
   if (state.view === 'my-stats') {
     const heading = [...root.querySelectorAll('h2')]
