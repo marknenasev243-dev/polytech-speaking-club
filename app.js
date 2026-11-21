@@ -76,6 +76,15 @@ else if(state.view==='admin-stats'){
 
 root.innerHTML = html;
 
+if (state.view === 'my-stats') {
+  const hints = root.querySelector('.clubcoin-hints');
+  const menu = root.querySelector('.menu');
+
+  if (hints && menu) {
+    menu.before(hints);
+  }
+}
+
 if (state.view === 'requests') {
   const cards = root.querySelectorAll('.admin-reg');
 
