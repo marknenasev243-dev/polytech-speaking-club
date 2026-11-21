@@ -1193,3 +1193,36 @@ html[data-winter-theme="dark"] {
 }
 
 /* Медаль и её голубой квадрат намеренно не изменяются. */
+
+/* Новогодняя стрелочка над надписью "Смена темы" */
+
+#app .winter-theme-switch .winter-theme-label::before,
+#app .winter-theme-switch .winter-theme-switch-label::before {
+  content: "❄ ↑ ❄";
+  display: block;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 2px;
+  color: #b97b27;
+  margin-bottom: 2px;
+  text-shadow: 0 0 4px rgba(255,255,255,.7);
+  pointer-events: none;
+}
+
+/* Светлая зимняя тема */
+html[data-winter-theme="light"]
+#app .winter-theme-switch .winter-theme-label::before,
+html[data-winter-theme="light"]
+#app .winter-theme-switch .winter-theme-switch-label::before {
+  color: #a66b20;
+}
+
+/* Тёмная зимняя тема */
+html[data-winter-theme="dark"]
+#app .winter-theme-switch .winter-theme-label::before,
+html[data-winter-theme="dark"]
+#app .winter-theme-switch .winter-theme-switch-label::before {
+  color: #ffdf9b;
+}
