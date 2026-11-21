@@ -71,5 +71,37 @@
       <div class="psc-loading-caption">Загружаем Speaking Club…</div>
     </div>
   </div>
+
+<script>
+  let loadingError = '';
+
+  window.addEventListener('error', function (event) {
+    loadingError = event.message || 'Ошибка JavaScript';
+  });
+
+  window.addEventListener('unhandledrejection', function (event) {
+    loadingError = String(
+      event.reason?.message || event.reason
+    );
+  });
+
+  setTimeout(function () {
+    const loading = document.querySelector('#app > .psc-loading');
+
+    if (loading) {
+      loading.innerHTML = `
+        <div style="padding:24px;text-align:center">
+          <h2>Не удалось запустить приложение</h2>
+          <p>Причина: <span id="psc-error-message"></span></p>
+          <p>Сделайте скриншот этого экрана.</p>
+        </div>
+      `;
+
+      document.getElementById('psc-error-message').textContent =
+        loadingError || 'JavaScript не запустился или сервер не ответил';
+    }
+  }, 12000);
+</script>
+
 </body>
 </html>
