@@ -534,3 +534,15 @@ html[data-winter-theme="light"] #app .winter-theme-ring {
     animation: none !important;
   }
 }
+
+/* Winter theme switch: keep the decorative caption off scrolled content.
+   At the top it sits over the background; below that it becomes invisible
+   and does not intercept taps on cards, buttons or navigation. */
+#app .winter-theme-switch {
+  transition: opacity .18s ease, visibility .18s ease !important;
+}
+#app .winter-theme-switch.winter-theme-switch--scrolled {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
