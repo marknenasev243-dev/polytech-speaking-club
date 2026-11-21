@@ -93,7 +93,18 @@ root.addEventListener('click',async ev=>{const b=ev.target.closest('[data-action
  else if(action==='change-lang'){await api(`/api/events/${state.selected}/language`,'PATCH',{language:b.dataset.lang});toast('Язык изменён');await refresh()}
  else if(action==='cancel'){if(confirm('Отменить свою запись?')){await api(`/api/events/${state.selected}/register`,'DELETE');toast('Запись отменена');await refresh()}}
  else if(action==='create'||action==='edit'){state.editId=action==='edit'?id:null;state.view='editor';render()}
- else if(action==='requests'){state.selected=id;await requests()}
+ else if(action==='requests'){state.selected=id;await requests()}   
+else if(action==='admin-cancel'){
+  if(confirm('Отменить запись этого участника?')){
+    await api(
+      `/api/admin/events/${state.selected}/registrations/${id}`,
+      'DELETE'
+    );
+    toast('Запись участника отменена');
+    await refresh();
+    await requests();
+  }
+}
  else if(action==='decide'){await api(`/api/admin/events/${state.selected}/registrations/${id}`,'PATCH',{status:b.dataset.status});toast(b.dataset.status==='approved'?'Участник одобрен':'Заявка отклонена');await refresh();await requests()}
  else if(action==='toggle-status'){const e=state.events.find(x=>x.id===id);const status=e.status==='cancelled'?'published':'cancelled';if(confirm(status==='cancelled'?'Отменить встречу для всех участников?':'Восстановить встречу?')){await api(`/api/admin/events/${id}/status`,'PATCH',{status});toast('Статус изменён');await refresh()}}
  }catch(e){toast(e.message)}});
