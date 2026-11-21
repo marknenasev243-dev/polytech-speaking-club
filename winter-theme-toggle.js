@@ -1,52 +1,116 @@
-/* Polytech Speaking Club: light snowy wreath first; toggle to dark wreath. */
+
 (() => {
-  const KEY = 'polytech-winter-wreath-theme-v1';
+  const KEY = 'polytech-winter-theme-v5';
+  const root = document.documentElement;
+
+  // При первом запуске — светлый фон
   let theme = 'light';
+  let switching = false;
+
   try {
-    const stored = localStorage.getItem(KEY);
-    if (stored === 'light' || stored === 'dark') theme = stored;
-  } catch (_) { /* Storage may be unavailable. */ }
+    if (localStorage.getItem(KEY) === 'dark') {
+      theme = 'dark';
+    }
+  } catch (e) {}
 
   function applyTheme() {
-    document.documentElement.dataset.winterTheme = theme;
-    document.querySelectorAll('.winter-theme-switch').forEach(button => {
-      button.setAttribute('aria-label', theme === 'light'
-        ? 'Смена темы: включить тёмный зимний фон'
-        : 'Смена темы: включить светлый зимний фон');
-      button.title = 'Смена темы';
-    });
+    root.setAttribute('data-winter-theme', theme);
   }
 
-  function insertSwitch() {
+  function toggleTheme(button) {
+    if (switching) return;
+
+    switching = true;
+
+    // Запускаем движение огоньков по кругу
+    button.classList.remove('is-flashing');
+    void button.offsetWidth;
+    button.classList.add('is-flashing');
+
+    // Меняем зимний фон во время свечения
+    setTimeout(() => {
+      theme = theme === 'light' ? 'dark' : 'light';
+      applyTheme();
+
+      try {
+        localStorage.setItem(KEY, theme);
+      } catch (e) {}
+    }, 250);
+
+    // Завершаем эффект гирлянды
+    setTimeout(() => {
+      button.classList.remove('is-flashing');
+      switching = false;
+    }, 1000);
+  }
+
+  function ensureButton() {
     const app = document.getElementById('app');
     if (!app) return;
+
     const hero = app.querySelector('.hero');
-    if (!hero || !hero.nextElementSibling?.classList.contains('tabs')) return;
-    if (hero.querySelector('.winter-theme-switch')) return;
+
+    const onPoster =
+      hero &&
+      hero.nextElementSibling?.classList.contains('tabs');
+
+    const existing = app.querySelector(
+      '.winter-theme-switch'
+    );
+
+    // Звезда активна на афише и в «Моих записях»
+    if (!onPoster) {
+      existing?.remove();
+      return;
+    }
+
+    if (existing) return;
 
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'winter-theme-switch';
-    button.innerHTML = '<span class="winter-theme-star" aria-hidden="true"></span><span class="winter-theme-label">Смена темы</span>';
+    button.setAttribute(
+      'aria-label',
+      'Смена зимней темы'
+    );
+
+    // Не рисуем вторую звезду!
+    // Только прозрачная кнопка и светящийся круг
+    button.innerHTML = `
+      <span class="winter-theme-lights"
+            aria-hidden="true"></span>
+      <span class="winter-theme-label">
+        Смена темы
+      </span>
+    `;
+
     button.addEventListener('click', () => {
-      theme = theme === 'light' ? 'dark' : 'light';
-      try { localStorage.setItem(KEY, theme); } catch (_) { }
-      applyTheme();
+      toggleTheme(button);
     });
-    hero.appendChild(button);
-    applyTheme();
+
+    app.appendChild(button);
   }
 
   applyTheme();
-  function init() {
+
+  function start() {
+    ensureButton();
+
     const app = document.getElementById('app');
-    if (!app) return;
-    insertSwitch();
-    new MutationObserver(insertSwitch).observe(app, { childList: true });
+
+    if (app) {
+      new MutationObserver(ensureButton)
+        .observe(app, { childList: true });
+    }
   }
+
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init, { once: true });
+    document.addEventListener(
+      'DOMContentLoaded',
+      start,
+      { once: true }
+    );
   } else {
-    init();
+    start();
   }
 })();
