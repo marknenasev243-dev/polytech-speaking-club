@@ -72,7 +72,7 @@ else if(state.view==='participants'){
             ${state.me?.is_admin && p.username ? `<div class="person-sub">@${esc(p.username)}</div>` : ''}
             <button type="button" class="person-sub club-coins club-coins-link" data-action="my-stats">${Number(p.club_coins??0)} 🪙</button>
 
-            }
+            
           </div>
           <span class="language">
             ${langLabel(p.language)}<br>Стол №${p.table_number??'—'}
