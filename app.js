@@ -70,7 +70,9 @@ else if(state.view==='participants'){
             </div>
             ${state.me?.is_admin
               ? `<div class="person-sub">${p.username?'@'+esc(p.username):''}</div>`
-              : `<div class="person-sub club-coins">${Number(p.club_coins??0)} Club coin 🪙</div>`
+              
+: `<button type="button" class="person-sub club-coins club-coins-link" data-action="my-stats">${Number(p.club_coins??0)} 🪙</button>`
+
             }
           </div>
           <span class="language">
