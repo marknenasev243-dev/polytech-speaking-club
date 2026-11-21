@@ -318,4 +318,22 @@ button[data-action="register"]::after {
   width: 13px;
   height: 13px;
   display: block;
+   
+/* Поиск участников и рейтинга */
+.club-search {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 14px 0;
+  border-radius: 14px;
+}
+
+.club-search-results {
+  margin-bottom: 16px;
+}
+
+.person[hidden] {
+  display: none !important;
+}
+
 }
