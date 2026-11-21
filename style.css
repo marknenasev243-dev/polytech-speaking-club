@@ -1068,20 +1068,6 @@ html[data-winter-theme="dark"] {
   --psc-shadow: 0 7px 22px rgba(3,16,41,.28);
 }
 
-/* Убираем плавающую надпись "Смена темы".
-   Сама звезда-кнопка продолжает работать. */
-
-#app .winter-theme-switch .winter-theme-label,
-#app .winter-theme-switch .winter-theme-switch-label {
-  display: none !important;
-}
-
-/* Не меняем положение самой звезды */
-#app .winter-theme-switch {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-}
 /* POLYTECH SPEAKING CLUB — МОИ ПОСЕЩЕНИЯ: ЕДИНОЕ ЗИМНЕЕ СТЕКЛО
    Добавить в самый конец текущего style.css.
    Меняются только фон, цвет, обводка и тень; геометрия и логика сохраняются. */
@@ -1194,73 +1180,46 @@ html[data-winter-theme="dark"] {
 
 /* Медаль и её голубой квадрат намеренно не изменяются. */
 
-/* Новогодняя стрелочка над надписью "Смена темы" */
+/* ================================================================
+   PSC · Новогодняя стрелочка у подписи переключателя темы
+   Переключатель создаётся скриптом непосредственно внутри <body>.
+   Не изменяем положение звезды, кнопки или оформление страниц.
+   Стрелка внутри подписи, поэтому автоматически скрывается вместе
+   с подписью, когда кнопка пересекает другие элементы интерфейса.
+   ================================================================ */
+body > .winter-theme-switch .winter-theme-label {
+  /* Подпись остаётся на прежнем месте. */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  text-align: center;
+}
 
-#app .winter-theme-switch .winter-theme-label::before,
-#app .winter-theme-switch .winter-theme-switch-label::before {
+body > .winter-theme-switch .winter-theme-label::before {
   content: "❄ ↑ ❄";
   display: block;
-  text-align: center;
-  font-size: 11px;
-  font-weight: 700;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  font-size: 10px;
   line-height: 1;
-  letter-spacing: 2px;
-  color: #b97b27;
-  margin-bottom: 2px;
-  text-shadow: 0 0 4px rgba(255,255,255,.7);
+  font-weight: 700;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  color: #9d681e;
+  text-shadow: 0 0 3px rgba(255, 255, 255, .65);
   pointer-events: none;
 }
 
-/* Светлая зимняя тема */
-html[data-winter-theme="light"]
-#app .winter-theme-switch .winter-theme-label::before,
-html[data-winter-theme="light"]
-#app .winter-theme-switch .winter-theme-switch-label::before {
-  color: #a66b20;
+html[data-winter-theme="dark"] body > .winter-theme-switch
+.winter-theme-label::before {
+  color: #ffde95;
+  text-shadow: 0 0 5px rgba(255, 221, 158, .55);
 }
 
-/* Тёмная зимняя тема */
-html[data-winter-theme="dark"]
-#app .winter-theme-switch .winter-theme-label::before,
-html[data-winter-theme="dark"]
-#app .winter-theme-switch .winter-theme-switch-label::before {
-  color: #ffdf9b;
+/* Если JavaScript скрыл подпись из-за пересечения, скрыта и стрелка. */
+body > .winter-theme-switch.winter-label-obstructed
+.winter-theme-label::before {
+  display: none;
 }
 
-/* Новогодняя стрелочка над кнопкой смены темы */
-
-#app .winter-theme-switch .winter-theme-label,
-#app .winter-theme-switch .winter-theme-switch-label {
-  display: block !important;
-  position: relative !important;
-  overflow: visible !important;
-  text-align: center !important;
-}
-
-/* Стрелочка со снежинками */
-#app .winter-theme-switch .winter-theme-label::before,
-#app .winter-theme-switch .winter-theme-switch-label::before {
-  content: "❄ ↑ ❄" !important;
-  display: block !important;
-  position: relative !important;
-  font-size: 12px !important;
-  line-height: 15px !important;
-  letter-spacing: 1px !important;
-  color: #ffdf93 !important;
-  text-align: center !important;
-  margin-bottom: 3px !important;
-  text-shadow: 0 0 5px #ffffff;
-  pointer-events: none !important;
-}
-
-/* Светлая тема */
-html[data-winter-theme="light"]
-#app .winter-theme-switch .winter-theme-label::before {
-  color: #a87320 !important;
-}
-
-/* Тёмная тема */
-html[data-winter-theme="dark"]
-#app .winter-theme-switch .winter-theme-label::before {
-  color: #ffe6aa !important;
-}
