@@ -225,3 +225,9 @@ button[data-action="register"]::after {
     transform: rotate(5deg) translateY(-5px);
   }
 }
+.club-coins {
+  color: #087cff;
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 4px;
+}
