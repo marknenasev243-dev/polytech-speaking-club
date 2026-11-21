@@ -179,7 +179,7 @@ else if(state.view==='visit-manage'){
 }
 
 root.innerHTML = html;
-
+setupParticipantSearch();
 if (state.view === 'my-stats') {
   const hints = root.querySelector('.clubcoin-hints');
   const menu = root.querySelector('.menu');
