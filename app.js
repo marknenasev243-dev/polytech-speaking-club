@@ -124,3 +124,23 @@ root.addEventListener('submit',async ev=>{
  }
  if(ev.target.id!=='event-form')return;ev.preventDefault();const f=new FormData(ev.target);const local=f.get('starts_at');const body={title:f.get('title'),description:f.get('description'),building:f.get('building'),room:f.get('room'),capacity:Number(f.get('capacity')),table_count:Number(f.get('table_count')),table_capacity:Number(f.get('table_capacity')),duration_minutes:Number(f.get('duration_minutes')),image_url:f.get('image_url'),starts_at:`${local}:00+03:00`};try{await api(state.editId?`/api/admin/events/${state.editId}`:'/api/admin/events',state.editId?'PUT':'POST',body);toast('Встреча сохранена');state.view='admin';await refresh()}catch(e){toast(e.message)}});
 (async()=>{try{state.me=await api('/api/me');await refresh()}catch(e){root.innerHTML=`<div class="hero"><div class="hero-emoji">🔐</div><h1>Speaking Club</h1><p class="muted">${esc(e.message)}</p><div class="notice">Откройте приложение через кнопку меню вашего Telegram-бота. Для локального тестирования смотрите README.md.</div></div>`}})();
+
+/* Автоматически скрываем отменённые встречи через 2 минуты */
+setInterval(() => {
+  if (state.view !== 'admin') return;
+
+  const expired = state.events.some(e =>
+    e.status === 'cancelled' &&
+    e.cancelled_at &&
+    Date.now() >= Date.parse(e.cancelled_at) + 120000
+  );
+
+  if (expired) {
+    state.events = state.events.filter(e =>
+      e.status !== 'cancelled' ||
+      (e.cancelled_at &&
+        Date.now() < Date.parse(e.cancelled_at) + 120000)
+    );
+    render();
+  }
+}, 3000);
