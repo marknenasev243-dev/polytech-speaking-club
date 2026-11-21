@@ -282,7 +282,7 @@ function setupParticipantSearch() {
   state.adminStats[index] || {},
   term
 );
-        );
+        
       });
     });
   }
