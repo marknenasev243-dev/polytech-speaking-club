@@ -358,7 +358,9 @@ body::before {
   z-index: 0;
   pointer-events: none;
   background-color: #d5eaff;
-  background-image: url('./winter-cozy-realistic.webp');
+ 
+background-image: url('./winter-light-wreath.webp');
+
   background-position: center top;
   background-repeat: no-repeat;
   background-size: 100% 100%;
