@@ -116,7 +116,7 @@ else if(state.view==='my-stats'){
   const top=state.leaderboard.slice(0,5);
   const medal=n=>n===1?'🥇':n===2?'🥈':n===3?'🥉':`№${n}`;
   const playerRow=p=>`<div class="person"><span style="min-width:38px;font-weight:700">${medal(p.place)}</span><div class="person-info"><div class="person-name">${esc([p.first_name,p.last_name].filter(Boolean).join(' ')||'Участник')}</div></div><b>${toClubCoin(p.visits)} 🪙 🏅</b></div>`;
-  html+=`<button class="back" data-action="all">‹ Назад</button><section class="hero stats-hero"><div class="hero-emoji">🏅</div><h1>Мои посещения><p class="muted">Засчитываются после завершения встречи организатором</p><h2>${s.count} ${s.count===1?'посещение':'посещений'}</h2></section><h2>🏆 Топ-5 участников</h2><p class="muted">По количеству Club coin</p><div class="panel">${top.length?top.map(playerRow).join(''):'<div class="empty">Пока никто не набрал посещений</div>'}</div>${state.leaderboardOpen?`<h3>Полный рейтинг</h3><div class="panel">${state.leaderboard.slice(5).length?state.leaderboard.slice(5).map(playerRow).join(''):'<div class="empty">Других участников пока нет</div>'}</div>${state.leaderboardHasMore?'<button class="secondary" data-action="leaderboard-more">Показать ещё</button>':'<button class="secondary" data-action="leaderboard-hide">Свернуть рейтинг</button>'}`:state.leaderboardHasMore?'<button class="secondary" data-action="leaderboard-more">Посмотреть остальных участников</button>':''}<h2>История посещений</h2><div class="panel">${s.history.length?s.history.map(h=>`<div class="person"><div class="person-info"><b>${esc(h.event?.title||'Встреча')}</b><div class="person-sub">${h.event?.starts_at?fmtDate(h.event.starts_at):''}</div></div><span class="pill green">+1</span></div>`).join(''):'<div class="empty">Пока нет засчитанных посещений</div>'}</div>${nav()}`;
+  html+=`<button class="back" data-action="all">‹ Назад</button><section class="hero stats-hero"><div class="hero-emoji">🏅</div><h1>Мои посещения</h1><p class="muted">Засчитываются после завершения встречи организатором</p><h2>${s.count} ${s.count===1?'посещение':'посещений'}</h2></section><h2>🏆 Топ-5 участников</h2><p class="muted">По количеству Club coin</p><div class="panel">${top.length?top.map(playerRow).join(''):'<div class="empty">Пока никто не набрал посещений</div>'}</div>${state.leaderboardOpen?`<h3>Полный рейтинг</h3><div class="panel">${state.leaderboard.slice(5).length?state.leaderboard.slice(5).map(playerRow).join(''):'<div class="empty">Других участников пока нет</div>'}</div>${state.leaderboardHasMore?'<button class="secondary" data-action="leaderboard-more">Показать ещё</button>':'<button class="secondary" data-action="leaderboard-hide">Свернуть рейтинг</button>'}`:state.leaderboardHasMore?'<button class="secondary" data-action="leaderboard-more">Посмотреть остальных участников</button>':''}<h2>История посещений</h2><div class="panel">${s.history.length?s.history.map(h=>`<div class="person"><div class="person-info"><b>${esc(h.event?.title||'Встреча')}</b><div class="person-sub">${h.event?.starts_at?fmtDate(h.event.starts_at):''}</div></div><span class="pill green">+1</span></div>`).join(''):'<div class="empty">Пока нет засчитанных посещений</div>'}</div>${nav()}`;
 
 
 html += `
@@ -181,33 +181,37 @@ else if(state.view==='visit-manage'){
 root.innerHTML = html;
 setupParticipantSearch();
 
+// A single, non-interactive glass background behind each selected screen.
+// Existing controls are moved intact: no listeners or actions are replaced.
+function placeInGlass(first, stop, kind) {
+  if (!first) return;
+  const glass = document.createElement('section');
+  glass.className = 'psc-glass-page psc-glass-page--' + kind +
+    (kind === 'stats' ? ' stats-page-glass' : '');
+  first.before(glass);
+  for (let node = first; node && node !== stop;) {
+    const next = node.nextSibling;
+    glass.appendChild(node);
+    node = next;
+  }
+}
+
 if (state.view === 'my-stats') {
   const hints = root.querySelector('.clubcoin-hints');
   const menu = root.querySelector('.menu');
-  const hero = root.querySelector('.hero');
+  const hero = root.querySelector('.hero.stats-hero');
 
-  // Сначала ставим Club coin перед нижним меню.
-  if (hints && menu) {
-    menu.before(hints);
-  }
-
-  // Объединяем содержимое статистики в одну подложку.
-  if (hero && hints) {
-    const glass = document.createElement('div');
-    glass.className = 'stats-page-glass';
-
-    hero.before(glass);
-
-    let item = hero;
-
-    while (item && item !== hints) {
-      const next = item.nextSibling;
-      glass.appendChild(item);
-      item = next;
-    }
-
-    glass.appendChild(hints);
-  }
+  // Club coin stays above the navigation, with the whole statistics page.
+  if (hints && menu) menu.before(hints);
+  placeInGlass(hero, menu, 'stats');
+} else if (state.view === 'editor') {
+  // Creation and editing use exactly the same visual container.
+  placeInGlass(root.querySelector('#app > h1'), null, 'editor');
+} else if (state.view === 'organizers') {
+  placeInGlass(root.querySelector('#app > h1'), root.querySelector('.menu'), 'organizers');
+} else if (state.view === 'requests') {
+  // Cancellation actions are appended below and remain inside this section.
+  placeInGlass(root.querySelector('#app > h1'), root.querySelector('.menu'), 'requests');
 }
 
 if (state.view === 'requests') {
