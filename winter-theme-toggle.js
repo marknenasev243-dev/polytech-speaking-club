@@ -120,12 +120,30 @@
       app.appendChild(button);
     }
     positionSwitch(button);
+    syncScrollVisibility();
+  }
+
+  // A fixed star must not cover event cards or navigation while scrolling.
+  // Keep it clickable at the top; hide it when the feed is scrolled.
+  function syncScrollVisibility() {
+    const button = document.querySelector('#app .winter-theme-switch');
+    if (!button) return;
+    const scrollTop = Math.max(
+      window.scrollY || 0,
+      document.documentElement.scrollTop || 0,
+      document.body.scrollTop || 0
+    );
+    button.classList.toggle('winter-theme-switch--scrolled', scrollTop > 48);
   }
 
   function start() {
     ensureButton();
     const app = document.getElementById('app');
     if (app) new MutationObserver(ensureButton).observe(app, { childList: true });
+    syncScrollVisibility();
+    window.addEventListener('scroll', syncScrollVisibility, { passive: true });
+    // Also handles Telegram webviews with an inner scrolling container.
+    document.addEventListener('scroll', syncScrollVisibility, { passive: true, capture: true });
     window.addEventListener('resize', () => {
       const button = document.querySelector('#app .winter-theme-switch');
       if (button) positionSwitch(button);
