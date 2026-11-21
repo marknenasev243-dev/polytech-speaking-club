@@ -140,7 +140,11 @@ root.addEventListener('click',async ev=>{const b=ev.target.closest('[data-action
  else if(action==='cancel'){if(confirm('Отменить свою запись?')){await api(`/api/events/${state.selected}/register`,'DELETE');toast('Запись отменена');await refresh()}}
  else if(action==='create'||action==='edit'){state.editId=action==='edit'?id:null;state.view='editor';render()}
  else if(action==='requests'){state.selected=id;await requests()}   
-else if(action==='admin-cancel'){
+else if(action==='admin-cancel'){  
+else if(action==='shop'){
+  state.view='shop';
+  render();
+}
   if(confirm('Отменить запись этого участника?')){
     await api(
       `/api/admin/events/${state.selected}/registrations/${id}`,
