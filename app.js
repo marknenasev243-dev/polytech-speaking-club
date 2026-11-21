@@ -180,12 +180,33 @@ else if(state.view==='visit-manage'){
 
 root.innerHTML = html;
 setupParticipantSearch();
+
 if (state.view === 'my-stats') {
   const hints = root.querySelector('.clubcoin-hints');
   const menu = root.querySelector('.menu');
+  const hero = root.querySelector('.hero');
 
+  // Сначала ставим Club coin перед нижним меню.
   if (hints && menu) {
     menu.before(hints);
+  }
+
+  // Объединяем содержимое статистики в одну подложку.
+  if (hero && hints) {
+    const glass = document.createElement('div');
+    glass.className = 'stats-page-glass';
+
+    hero.before(glass);
+
+    let item = hero;
+
+    while (item && item !== hints) {
+      const next = item.nextSibling;
+      glass.appendChild(item);
+      item = next;
+    }
+
+    glass.appendChild(hints);
   }
 }
 
