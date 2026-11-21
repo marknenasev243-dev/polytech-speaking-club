@@ -1082,3 +1082,114 @@ html[data-winter-theme="dark"] {
   border: none !important;
   box-shadow: none !important;
 }
+/* POLYTECH SPEAKING CLUB — МОИ ПОСЕЩЕНИЯ: ЕДИНОЕ ЗИМНЕЕ СТЕКЛО
+   Добавить в самый конец текущего style.css.
+   Меняются только фон, цвет, обводка и тень; геометрия и логика сохраняются. */
+
+/* Палитра как в панели организатора. */
+html[data-winter-theme="light"] {
+  --stats-glass: rgba(250, 253, 255, .88);
+  --stats-glass-soft: rgba(239, 248, 255, .76);
+  --stats-glass-strong: rgba(255, 255, 255, .94);
+  --stats-ink: #173451;
+  --stats-muted: #496681;
+  --stats-line: rgba(117, 190, 242, .75);
+  --stats-shadow: 0 5px 18px rgba(21, 87, 150, .13);
+}
+html[data-winter-theme="dark"] {
+  --stats-glass: rgba(13, 38, 77, .91);
+  --stats-glass-soft: rgba(20, 51, 91, .78);
+  --stats-glass-strong: rgba(12, 34, 70, .94);
+  --stats-ink: #f5faff;
+  --stats-muted: #d5e8fa;
+  --stats-line: rgba(119, 187, 248, .67);
+  --stats-shadow: 0 7px 22px rgba(3, 16, 41, .26);
+}
+
+/* Главная секция «Мои посещения», как стеклянные секции организатора. */
+#app .hero.stats-hero {
+  background: var(--stats-glass, rgba(250,253,255,.88)) !important;
+  color: var(--stats-ink, #173451) !important;
+  border-color: var(--stats-line, #8ac9f5) !important;
+  box-shadow: var(--stats-shadow, 0 5px 18px rgba(21,87,150,.13)) !important;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+/* Название, пояснение и число посещений — один визуальный язык. */
+#app .hero.stats-hero h1,
+#app .hero.stats-hero h2 {
+  background: var(--stats-glass-strong, rgba(255,255,255,.94)) !important;
+  color: var(--stats-ink, #173451) !important;
+  border-color: var(--stats-line, #8ac9f5) !important;
+  box-shadow: var(--stats-shadow, 0 5px 18px rgba(21,87,150,.13)) !important;
+  text-shadow: none !important;
+}
+#app .hero.stats-hero p,
+#app .hero.stats-hero .muted {
+  background: var(--stats-glass-soft, rgba(239,248,255,.76)) !important;
+  color: var(--stats-muted, #496681) !important;
+  border-color: var(--stats-line, #8ac9f5) !important;
+  text-shadow: none !important;
+}
+
+/* Все заголовки, подписи, поиск, панели рейтинга и истории на экране статистики. */
+#app:has(.hero.stats-hero) > h2,
+#app:has(.hero.stats-hero) > h3 {
+  background: var(--stats-glass, rgba(250,253,255,.88)) !important;
+  color: var(--stats-ink, #173451) !important;
+  border-color: var(--stats-line, #8ac9f5) !important;
+  box-shadow: var(--stats-shadow, 0 5px 18px rgba(21,87,150,.13)) !important;
+  text-shadow: none !important;
+}
+#app:has(.hero.stats-hero) > p.muted,
+#app:has(.hero.stats-hero) > .smallnote {
+  background: var(--stats-glass-soft, rgba(239,248,255,.76)) !important;
+  color: var(--stats-muted, #496681) !important;
+  border-color: var(--stats-line, #8ac9f5) !important;
+}
+#app:has(.hero.stats-hero) .panel,
+#app:has(.hero.stats-hero) .club-search-results {
+  background: var(--stats-glass, rgba(250,253,255,.88)) !important;
+  color: var(--stats-ink, #173451) !important;
+  border-color: var(--stats-line, #8ac9f5) !important;
+  box-shadow: var(--stats-shadow, 0 5px 18px rgba(21,87,150,.13)) !important;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+#app:has(.hero.stats-hero) .club-search,
+#app:has(.hero.stats-hero) input[type="search"] {
+  background: var(--stats-glass-strong, rgba(255,255,255,.94)) !important;
+  color: var(--stats-ink, #173451) !important;
+  border-color: var(--stats-line, #8ac9f5) !important;
+}
+#app:has(.hero.stats-hero) .club-search::placeholder,
+#app:has(.hero.stats-hero) input[type="search"]::placeholder {
+  color: var(--stats-muted, #496681) !important;
+  opacity: 1;
+}
+#app:has(.hero.stats-hero) .empty,
+#app:has(.hero.stats-hero) .person-sub {
+  color: var(--stats-muted, #496681) !important;
+}
+#app:has(.hero.stats-hero) .person-name,
+#app:has(.hero.stats-hero) .panel b,
+#app:has(.hero.stats-hero) .panel strong {
+  color: var(--stats-ink, #173451) !important;
+}
+
+/* Статистика Club coin: существующие две маленькие плашки остаются отдельными. */
+#app:has(.hero.stats-hero) .clubcoin-hints {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+#app:has(.hero.stats-hero) .clubcoin-info,
+#app:has(.hero.stats-hero) .clubcoin-shop-btn {
+  background: var(--stats-glass-strong, rgba(255,255,255,.94)) !important;
+  color: var(--stats-ink, #173451) !important;
+  border-color: var(--stats-line, #8ac9f5) !important;
+  box-shadow: var(--stats-shadow, 0 5px 18px rgba(21,87,150,.13)) !important;
+}
+
+/* Медаль и её голубой квадрат намеренно не изменяются. */
