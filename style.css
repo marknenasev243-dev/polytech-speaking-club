@@ -1,3 +1,5 @@
+
+}
 :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:#171a20;background:#fff;font-synthesis:none}*{box-sizing:border-box}body{margin:0}button,input,textarea,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.48;cursor:not-allowed}a{color:#087cf8}#app{max-width:780px;margin:0 auto;padding:18px 18px calc(90px + env(safe-area-inset-bottom))}.loading{text-align:center;padding:100px 12px;color:#777}.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:4px 0 28px}.brand{display:flex;align-items:center;gap:11px;font-size:17px;font-weight:800}.logo{width:44px;height:44px;background:#e6f3ff;border-radius:15px;display:grid;place-items:center;font-size:25px}.tag{font-size:12px;color:#097af2;background:#e6f2ff;padding:8px 11px;border-radius:20px}.hero{text-align:center;margin:24px 0 22px}.hero-emoji{font-size:57px;line-height:1.4}.hero h1{font-size:29px;margin:8px 0 7px;letter-spacing:-.6px}.muted{color:#8b8d96}.hero p{margin:0;font-size:15px}.tabs{display:flex;border:1.5px solid #0c82ff;border-radius:13px;overflow:hidden;margin:20px 0 25px}.tabs button{flex:1;border:0;background:white;padding:13px 8px;font-weight:700;color:#1a1a1a}.tabs button.active{color:#087bfa;background:#e7f2ff}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 13px}.event-card{min-width:0;cursor:pointer}.poster{aspect-ratio:1/1;border-radius:20px;overflow:hidden;background:linear-gradient(140deg,#b5e5ff,#2373d6);display:flex;align-items:center;justify-content:center;position:relative}.poster img{width:100%;height:100%;object-fit:cover}.poster .fallback{font-size:62px}.poster .lang-flag{position:absolute;bottom:9px;right:10px;background:#fff;border-radius:20px;padding:5px 8px;font-size:14px}.event-card h3{font-size:16px;margin:9px 0 5px;line-height:1.25}.event-card .date{font-size:13px}.event-card .count{font-size:12px;color:#92939c;margin:5px 0}.pill{display:inline-flex;align-items:center;gap:5px;background:#e7f2ff;color:#087bfa;padding:6px 11px;border-radius:20px;font-weight:650;font-size:13px}.pill.green{background:#e7f8ec;color:#168445}.pill.orange{background:#fff3df;color:#ad6a00}.pill.gray{background:#f0f1f4;color:#626570}.back{background:none;border:0;color:#0c82ff;font-size:27px;padding:0}.detail{text-align:center}.detail .poster{width:175px;margin:12px auto 28px;border-radius:22px}.detail h1{font-size:27px;margin:8px 0 6px}.detail .description{white-space:pre-wrap;text-align:left;line-height:1.5;background:#f7f9fc;padding:15px;border-radius:14px}.detail .meta{font-size:16px;margin:12px 0}.detail .location{color:#52545c}.detail .places{margin:20px auto}.primary{border:0;background:#087cfa;color:white;border-radius:15px;padding:15px 17px;font-weight:750;width:100%;font-size:16px}.secondary{border:0;background:#e5f1ff;color:#087cf8;border-radius:15px;padding:14px 17px;font-weight:700;width:100%;font-size:16px}.danger{border:1px solid #f5c9c9;background:#fff;color:#c63232;border-radius:14px;padding:12px 15px;font-weight:700}.btnrow{display:flex;gap:8px}.btnrow>*{flex:1}.section-title{font-size:20px;margin:24px 0 12px}.panel{border:1px solid #e5e5ee;border-radius:18px;padding:15px;margin:14px 0;text-align:left}.person{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #f0f1f4}.person:last-child{border-bottom:0}.avatar{width:48px;height:48px;border-radius:50%;background:#e8f3ff;display:grid;place-items:center;color:#087cf8;font-size:20px;font-weight:700;overflow:hidden;flex-shrink:0}.avatar img{width:100%;height:100%;object-fit:cover}.person-info{min-width:0;flex:1}.person-name{font-weight:700;overflow-wrap:anywhere}.person-sub{font-size:12px;color:#91939b;margin-top:4px}.language{font-size:12px;white-space:nowrap}.empty{text-align:center;padding:45px 15px;color:#8b8d96}.empty .emoji{font-size:45px;margin-bottom:10px}.field{display:block;font-size:13px;font-weight:650;margin:13px 0 6px}.control{width:100%;padding:12px;border:1px solid #d9dce6;border-radius:11px;background:white;color:#171a20;outline-color:#087cf8}textarea.control{min-height:90px;resize:vertical}.choices{display:flex;gap:9px;margin:12px 0 18px}.choice{flex:1;border:1.5px solid #dce4ed;border-radius:13px;padding:15px 7px;background:white;font-weight:650}.choice.selected{border-color:#087cfa;background:#e8f3ff;color:#087cfa}.notice{padding:12px 14px;background:#f3f8ff;border-radius:13px;color:#3d638d;font-size:13px;line-height:1.5;margin:12px 0}.admin-card{border:1px solid #e5e5ed;border-radius:16px;padding:15px;margin:13px 0}.admin-card h3{margin:0 0 8px}.admin-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.small{padding:9px 12px;border-radius:10px;font-size:13px;width:auto}.status{font-size:12px;margin:5px 0;color:#777}.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1f2b3b;color:#fff;padding:12px 20px;border-radius:12px;max-width:90%;z-index:10;box-shadow:0 6px 25px #0002}.menu{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:14px}.menu button{border:0;border-radius:11px;background:#eef4fb;padding:10px 13px;color:#1379e6;font-weight:650}.line{height:1px;background:#edf0f4;margin:18px 0}.smallnote{font-size:12px;color:#8b8d96}.filter{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}.filter button{border:1px solid #d7e6f9;border-radius:20px;padding:8px 11px;background:#fff;color:#087cf8}.filter button.active{background:#087cf8;color:white}.admin-reg{padding:12px 0;border-bottom:1px solid #eee}.admin-reg:last-child{border:0}@media(min-width:600px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}.hero{margin-top:35px}.detail .poster{width:220px}}
 
 .tables-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0}.table-tile{border:1px solid #dbe6f3;border-radius:14px;background:#f6faff;padding:14px;display:flex;flex-direction:column;gap:6px}.table-tile span{font-size:13px}.table-tile small{color:#68768a}.language{text-align:right;line-height:1.7}
@@ -534,6 +536,8 @@ body > .winter-theme-switch:focus-visible {
   body > .winter-theme-switch .winter-sparkle,
   body > .winter-theme-switch.is-sparkling .winter-theme-ring { animation: none !important; }
 }
+
+
 /* Polytech Speaking Club — контрастный текст для двух зимних тем.
    Добавить ПОСЛЕ всех предыдущих стилей в конец style.css.
    Не меняет фоновые картинки, иконки, кнопки, карточки и JavaScript. */
@@ -658,5 +662,284 @@ html[data-winter-theme="dark"] {
   html[data-winter-theme="dark"] {
     --winter-title-glass: #102d54;
     --winter-small-glass: #203e65;
+  }
+}
+
+
+/* ============================================================
+   POLYTECH SPEAKING CLUB — UNIFIED WINTER GLASS DESIGN
+   Light: icy white glass + thin cyan outlines.
+   Dark: navy glass + pale blue text and thin blue outlines.
+   Styling only; all buttons, links, handlers and icons remain intact.
+   ============================================================ */
+:root,
+html[data-winter-theme="light"] {
+  --psc-surface: rgba(250, 253, 255, .91);
+  --psc-surface-soft: rgba(246, 251, 255, .77);
+  --psc-surface-strong: rgba(255, 255, 255, .96);
+  --psc-border: rgba(101, 187, 244, .82);
+  --psc-border-soft: rgba(128, 197, 245, .69);
+  --psc-text: #142f4c;
+  --psc-muted: #496681;
+  --psc-accent: #0677e8;
+  --psc-active: rgba(212, 236, 255, .97);
+  --psc-shadow: 0 6px 20px rgba(18, 80, 146, .13);
+  --psc-focus: #087cff;
+}
+html[data-winter-theme="dark"] {
+  --psc-surface: rgba(13, 38, 77, .91);
+  --psc-surface-soft: rgba(20, 51, 91, .80);
+  --psc-surface-strong: rgba(12, 34, 70, .96);
+  --psc-border: rgba(118, 186, 248, .65);
+  --psc-border-soft: rgba(107, 171, 228, .49);
+  --psc-text: #f5faff;
+  --psc-muted: #d5e8fa;
+  --psc-accent: #9fd1ff;
+  --psc-active: rgba(48, 104, 165, .88);
+  --psc-shadow: 0 7px 22px rgba(3, 16, 41, .28);
+  --psc-focus: #d4ebff;
+}
+
+/* All main informational blocks share one palette, while keeping their geometry. */
+#app .top .brand,
+#app .tag,
+#app .tabs,
+#app .event-card,
+#app .panel,
+#app .admin-card,
+#app .table-tile,
+#app .notice,
+#app .detail .description,
+#app .clubcoin-hints,
+#app .clubcoin-shop-btn,
+#app .club-search-results {
+  background: var(--psc-surface) !important;
+  color: var(--psc-text) !important;
+  border: 1px solid var(--psc-border-soft) !important;
+  box-shadow: var(--psc-shadow) !important;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+/* Never tint cover photographs, participant pictures, calendar or medal artwork. */
+#app .event-card .poster,
+#app .detail .poster,
+#app .poster img,
+#app .avatar img,
+#app .logo img { filter: none !important; }
+
+/* Headers and standalone text directly over the snowy artwork. */
+#app .hero h1,
+#app .hero h2,
+#app .detail h1,
+#app .section-title,
+#app > h1,
+#app > h2,
+#app > h3,
+#app .detail .meta,
+#app .detail .location,
+#app .hero p,
+#app > .muted,
+#app > .smallnote,
+#app .clubcoin-info {
+  border-color: var(--psc-border-soft) !important;
+  color: var(--psc-text) !important;
+  background: var(--psc-surface) !important;
+  box-shadow: var(--psc-shadow) !important;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+#app .hero p,
+#app .detail .meta,
+#app .detail .location,
+#app > .muted,
+#app > .smallnote,
+#app .clubcoin-info {
+  background: var(--psc-surface-soft) !important;
+  color: var(--psc-muted) !important;
+}
+
+/* Keep the same calendar graphic and background, but give the medal
+   exactly the same cyan square as the calendar across both themes. */
+#app .hero.stats-hero .hero-emoji {
+  background: linear-gradient(145deg, #d0faff, #91e0ff) !important;
+  background-image: linear-gradient(145deg, #d0faff, #91e0ff) !important;
+  border: 1.5px solid #69bbed !important;
+  border-radius: 25px !important;
+  box-shadow: 0 9px 23px rgba(16,102,185,.22) !important;
+  color: #171a20 !important;
+  -webkit-text-fill-color: initial !important;
+}
+#app .hero.stats-hero .hero-emoji::before,
+#app .hero.stats-hero .hero-emoji::after {
+  content: none !important;
+  display: none !important;
+}
+
+/* Global labels, stats and list items inside themed cards. */
+#app .brand,
+#app .brand .smallnote,
+#app .top .brand small,
+#app .event-card h3,
+#app .event-card .date,
+#app .event-card .count,
+#app .panel h1, #app .panel h2, #app .panel h3,
+#app .admin-card h1, #app .admin-card h2, #app .admin-card h3,
+#app .person-name,
+#app .person-sub,
+#app .language,
+#app .table-tile,
+#app .table-tile small,
+#app .status,
+#app .smallnote,
+#app .empty,
+#app .detail .description,
+#app .admin-reg,
+#app .clubcoin-info,
+#app .clubcoin-hints {
+  color: var(--psc-text) !important;
+}
+#app .brand .smallnote,
+#app .top .brand small,
+#app .event-card .date,
+#app .event-card .count,
+#app .person-sub:not(.club-coins),
+#app .table-tile small,
+#app .status,
+#app .smallnote,
+#app .empty,
+#app .clubcoin-info {
+  color: var(--psc-muted) !important;
+}
+#app .person,
+#app .admin-reg { border-bottom-color: var(--psc-border-soft) !important; }
+#app .line { background-color: var(--psc-border-soft) !important; }
+
+/* All ordinary controls share the same glass and outline. */
+#app .tabs button,
+#app .menu button,
+#app .filter button,
+#app .choice,
+#app .secondary,
+#app .back,
+#app .clubcoin-shop-btn,
+#app .admin-actions button:not(.danger):not(.primary),
+#app .control,
+#app input[type="search"],
+#app textarea,
+#app select {
+  background: var(--psc-surface-strong) !important;
+  color: var(--psc-text) !important;
+  border: 1px solid var(--psc-border) !important;
+  box-shadow: 0 3px 10px rgba(10, 37, 74, .10) !important;
+  -webkit-backdrop-filter: blur(9px);
+  backdrop-filter: blur(9px);
+}
+/* Primary buttons remain blue and readable even in the night mode. */
+#app .primary,
+#app button.primary {
+  background: #087cff !important;
+  color: #fff !important;
+  border: 1px solid #7ac0ff !important;
+  box-shadow: var(--psc-shadow) !important;
+}
+/* Warning/destructive buttons remain identifiable, but keep theme outlines. */
+#app .danger {
+  background: var(--psc-surface-strong) !important;
+  color: #c33645 !important;
+  border: 1px solid #e9a9b0 !important;
+  box-shadow: var(--psc-shadow) !important;
+}
+html[data-winter-theme="dark"] #app .danger { color: #ffb8c2 !important; }
+
+/* Active tabs and selected language filters stay obvious. */
+#app .tabs button.active,
+#app .choice.selected {
+  background: var(--psc-active) !important;
+  color: var(--psc-accent) !important;
+  border-color: var(--psc-border) !important;
+}
+#app .filter button.active {
+  background: #087cff !important;
+  color: #ffffff !important;
+  border-color: #8bcaff !important;
+}
+html[data-winter-theme="dark"] #app .tabs button.active,
+html[data-winter-theme="dark"] #app .choice.selected {
+  color: #fff !important;
+}
+
+/* Pills and attendance status keep distinct semantic green / amber colors. */
+#app .pill:not(.green):not(.orange):not(.gray),
+#app .tag {
+  color: var(--psc-accent) !important;
+  background: var(--psc-surface-strong) !important;
+  border-color: var(--psc-border-soft) !important;
+}
+#app .pill.green { background: #e2f6ea !important; color: #167c40 !important; }
+#app .pill.orange { background: #fff0da !important; color: #97550b !important; }
+#app .pill.gray { background: var(--psc-surface-soft) !important; color: var(--psc-muted) !important; }
+#app .club-coins, #app .club-coins-link, #app .clubcoin-shop-btn {
+  color: var(--psc-accent) !important;
+}
+
+/* Event poster borders and image frames, without changing media sizing. */
+#app .event-card,
+#app .event-card .poster,
+#app .detail .poster,
+#app .logo,
+#app .avatar,
+#app .hero:has(+ .tabs) .hero-emoji,
+#app .hero.stats-hero .hero-emoji {
+  border-color: var(--psc-border) !important;
+}
+#app .event-card .poster,
+#app .detail .poster { border: 1px solid var(--psc-border-soft) !important; }
+
+/* Universal content containers, e.g. ranking history and admin forms. */
+#app .hero.stats-hero {
+  background: var(--psc-surface-soft) !important;
+  border: 1px solid var(--psc-border-soft) !important;
+  color: var(--psc-text) !important;
+  box-shadow: var(--psc-shadow) !important;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+#app .hero.stats-hero h1,
+#app .hero.stats-hero h2 { color: var(--psc-text) !important; }
+#app .notice { color: var(--psc-muted) !important; }
+#app .control::placeholder,
+#app input::placeholder,
+#app textarea::placeholder { color: var(--psc-muted) !important; opacity: .9; }
+
+/* Keep icons themselves untouched; add only a subtle halo to image frames. */
+#app .avatar,
+#app .logo {
+  box-shadow: 0 3px 11px rgba(18, 100, 181, .20) !important;
+}
+
+/* The original photographic star and interactive hitbox do not change. */
+body > .winter-theme-switch .winter-theme-label {
+  background: var(--psc-surface-strong) !important;
+  color: var(--psc-text) !important;
+  border-color: var(--psc-border) !important;
+}
+
+/* The actual text remains legible in older mobile WebViews as well. */
+@supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  #app .event-card, #app .panel, #app .admin-card,
+  #app .top .brand, #app .hero.stats-hero,
+  #app .tabs, #app .notice, #app .detail .description {
+    background: var(--psc-surface-strong) !important;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  :root,html[data-winter-theme="light"] {
+    --psc-surface: #fff; --psc-surface-soft: #eff8ff;
+    --psc-surface-strong: #fff;
+  }
+  html[data-winter-theme="dark"] {
+    --psc-surface: #122d51; --psc-surface-soft: #183b64;
+    --psc-surface-strong: #0c2341;
   }
 }
