@@ -426,7 +426,7 @@ html[data-winter-theme="dark"] body::before {
 
 #app .winter-theme-switch {
   --wreath-diameter: 68px;
-  position: fixed !important;
+  position: absolute !important;
   left: 11.4vw; /* JS synchronizes with background crop/scaling */
   top: 20.4vh;
   width: 82px;
@@ -535,14 +535,20 @@ html[data-winter-theme="light"] #app .winter-theme-ring {
   }
 }
 
-/* Winter theme switch: keep the decorative caption off scrolled content.
-   At the top it sits over the background; below that it becomes invisible
-   and does not intercept taps on cards, buttons or navigation. */
+/* STAR SCROLL FIX v2: attach the clickable area to the page, not the viewport.
+   In Telegram WebView the scroll root varies, so fixed positioning + scrollY
+   cannot reliably hide the label. With absolute positioning it naturally
+   scrolls off the screen without covering the tabs or event cards. */
+#app { position: relative !important; }
 #app .winter-theme-switch {
-  transition: opacity .18s ease, visibility .18s ease !important;
+  position: absolute !important;
+  transition: none !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
+/* Neutralize the old hiding class in case it remains during a cached load. */
 #app .winter-theme-switch.winter-theme-switch--scrolled {
-  opacity: 0 !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
 }
