@@ -1223,3 +1223,49 @@ body > .winter-theme-switch.winter-label-obstructed
   display: none;
 }
 
+/* Одна общая подложка в разделе "Мои посещения" */
+
+#app .stats-page-glass {
+  position: relative;
+  margin: 14px 0 20px;
+  padding: 12px 0 8px;
+  border-radius: 22px;
+  background: rgba(215, 225, 234, 0.64) !important;
+  border: 1px solid rgba(153, 200, 238, 0.72);
+  box-shadow: 0 6px 22px rgba(20, 65, 110, 0.13);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  color: var(--psc-text);
+}
+
+/* Тёмная тема */
+html[data-winter-theme="dark"] #app .stats-page-glass {
+  background: rgba(18, 41, 73, 0.72) !important;
+  border-color: rgba(112, 172, 231, 0.55);
+  box-shadow: 0 8px 25px rgba(0, 13, 35, 0.25);
+}
+
+/* Убираем старый большой прямоугольник вокруг медали */
+#app .stats-page-glass .hero {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* У Club coin нет второй большой подложки */
+#app .stats-page-glass .clubcoin-hints {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* Медаль остаётся в своём голубом квадрате */
+#app .stats-page-glass .hero-emoji {
+  background: linear-gradient(145deg, #d0faff, #91e0ff) !important;
+}
+
+
