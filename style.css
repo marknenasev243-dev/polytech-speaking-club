@@ -943,3 +943,127 @@ body > .winter-theme-switch .winter-theme-label {
     --psc-surface-strong: #0c2341;
   }
 }
+/* ==================================================================
+   PSC — glass backgrounds for organizer pages and participant lists
+   Visual only. No changed sizes, padding, margins, layout, or behavior.
+   Uses the same palette as the existing winter light/dark theme.
+   ================================================================== */
+
+/* Labels on create/edit meeting, organizer management, and admin forms.
+   A line-height-sized glass strip requires no extra padding or reflow. */
+#app .field,
+#app form label.field,
+#app #event-form .field,
+#app #organizer-form .field {
+  color: var(--psc-text, #142f4c) !important;
+  background: var(--psc-surface-soft, rgba(246,251,255,.77)) !important;
+  border-radius: 7px;
+  -webkit-backdrop-filter: blur(7px);
+  backdrop-filter: blur(7px);
+  text-shadow: none !important;
+}
+
+/* Standalone organizer-page text, including meeting title above tabs. */
+#app > p.muted,
+#app > p.smallnote,
+#app > .muted,
+#app > .smallnote {
+  color: var(--psc-muted, #496681) !important;
+  background: var(--psc-surface-soft, rgba(246,251,255,.77)) !important;
+  border-radius: 9px;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+/* Registration list has no surrounding panel. Each original item gets
+   its own translucent backing without moving buttons or photographs. */
+#app > .admin-reg {
+  background: var(--psc-surface, rgba(250,253,255,.91)) !important;
+  color: var(--psc-text, #142f4c) !important;
+  border-radius: 15px;
+  outline: 1px solid var(--psc-border-soft, #a8d6fa);
+  box-shadow: var(--psc-shadow, 0 6px 20px rgba(18,80,146,.13));
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+/* Organizer list is rendered as bare .person rows in the page. Preserve
+   the existing row geometry and only tint their background. */
+#app > .person,
+#app > .admin-reg > .person {
+  background: var(--psc-surface-soft, rgba(246,251,255,.77)) !important;
+  color: var(--psc-text, #142f4c) !important;
+  border-radius: 13px;
+  -webkit-backdrop-filter: blur(9px);
+  backdrop-filter: blur(9px);
+}
+
+/* All exposed status labels stay legible on either background. */
+#app .admin-reg .person-name,
+#app > .person .person-name,
+#app #event-form .field,
+#app #organizer-form .field {
+  color: var(--psc-text, #142f4c) !important;
+}
+#app .admin-reg .person-sub,
+#app .admin-reg .status,
+#app > .person .person-sub {
+  color: var(--psc-muted, #496681) !important;
+}
+
+/* Controls in create/edit pages and organizer management share the
+   existing winter theme. Keep native date/time widgets readable. */
+#app #event-form .control,
+#app #organizer-form .control,
+#app #organizer-form input,
+#app form#event-form input,
+#app form#event-form textarea,
+#app form#event-form select {
+  color: var(--psc-text, #142f4c) !important;
+  background: var(--psc-surface-strong, rgba(255,255,255,.96)) !important;
+  border-color: var(--psc-border, #65bbf4) !important;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+html[data-winter-theme="dark"] #app input[type="date"],
+html[data-winter-theme="dark"] #app input[type="datetime-local"],
+html[data-winter-theme="dark"] #app input[type="time"] {
+  color-scheme: dark;
+}
+
+/* Large headings in organizer pages are already styled by the shared
+   winter theme, but they also need fallback coverage as top-level H1. */
+#app > h1,
+#app > h2,
+#app > h3 {
+  color: var(--psc-text, #142f4c) !important;
+  background: var(--psc-surface, rgba(250,253,255,.91)) !important;
+  border-color: var(--psc-border-soft, #a8d6fa) !important;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+/* Descriptive line under 'Записи на встречу': no position changes. */
+#app > h1 + p.muted {
+  color: var(--psc-muted, #496681) !important;
+  background: var(--psc-surface-soft, rgba(246,251,255,.77)) !important;
+}
+
+/* Status counter colors remain meaningful both day and night. */
+html[data-winter-theme="dark"] #app .filter .pill.gray {
+  color: var(--psc-muted, #d5e8fa) !important;
+  background: var(--psc-surface-soft, rgba(20,51,91,.80)) !important;
+}
+
+/* Optional fallback if the current stylesheet does not yet define PSC
+   variables (this does not interfere when variables already exist). */
+html[data-winter-theme="dark"] {
+  --psc-surface: rgba(13,38,77,.91);
+  --psc-surface-soft: rgba(20,51,91,.80);
+  --psc-surface-strong: rgba(12,34,70,.96);
+  --psc-text: #f5faff;
+  --psc-muted: #d5e8fa;
+  --psc-border: rgba(118,186,248,.65);
+  --psc-border-soft: rgba(107,171,228,.49);
+  --psc-shadow: 0 7px 22px rgba(3,16,41,.28);
+}
