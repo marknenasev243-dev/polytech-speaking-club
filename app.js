@@ -29,15 +29,56 @@ else if(state.view==='detail'){const e=state.events.find(x=>x.id===state.selecte
 <div class="places"><span class="pill">Осталось ${cap(e)} мест</span></div>${e.status==='cancelled'?'<div class="notice">Встреча отменена</div>':e.status==='completed'?'<div class="notice">✅ Встреча завершена. Посещение учтено, если вы не отменили запись до закрытия.</div>':new Date(e.starts_at)<=new Date()?'<div class="notice">Встреча уже прошла</div>':active?`<div class="notice">${statusLabel(e.my_status)}<br>Ваш язык общения: <b>${langLabel(e.my_language)}</b>${e.my_status==='pending'?'<br>Организатор ещё не подтвердил вашу заявку.':`<br><b>Ваш стол: №${e.my_table||'не назначен'}</b>`}</div><div class="choices"><button class="choice ${e.my_language==='ru'?'selected':''}" data-action="change-lang" data-lang="ru">🇷🇺 Русский</button><button class="choice ${e.my_language==='en'?'selected':''}" data-action="change-lang" data-lang="en">🇬🇧 Английский</button></div><button class="danger" data-action="cancel">Отменить запись</button>`:`<h3>На каком языке хочешь общаться?</h3><div class="choices"><button class="choice ${state.language==='ru'?'selected':''}" data-action="select-lang" data-lang="ru">🇷🇺 Русский</button><button class="choice ${state.language==='en'?'selected':''}" data-action="select-lang" data-lang="en">🇬🇧 Английский</button></div><button class="primary" data-action="register" ${cap(e)===0?'disabled':''}>${cap(e)===0?'Мест нет':'Записаться'}</button><div class="smallnote" style="margin-top:10px">Запись подтверждается сразу. Стол назначается автоматически.</div>`}</section>${nav()}`;}
 
 else if (state.view === 'participants') {
-  const e = state.events.find(x => x.id === state.selected);
-  const arr = state.participants.filter(p =>
-    state.filter === 'all' || p.language === state.filter
+
+else if(state.view==='participants'){
+  const e=state.events.find(x=>x.id===state.selected);
+  const arr=state.participants.filter(p=>
+    state.filter==='all'||p.language===state.filter
   );
 
-  html += `
+  html+=`
     <button class="back" data-action="detail">‹ Назад</button>
     <section class="hero">
       <div class="hero-emoji">👥</div>
+      <h1>Участники встречи</h1>
+      <p class="muted">${e?.approved_count||0} из ${e?.capacity||0}</p>
+    </section>
+    <div class="filter">
+      <button data-action="filter" data-filter="all">Все</button>
+      <button data-action="filter" data-filter="ru">🇷🇺 Русский</button>
+      <button data-action="filter" data-filter="en">🇬🇧 Английский</button>
+    </div>
+    <div class="tables-grid">
+      ${state.tables.map(t=>`
+        <div class="table-tile">
+          <b>Стол №${t.number}</b>
+          <span>${t.language?langLabel(t.language):'⚪ Свободный'}</span>
+          <small>${t.count}/${t.capacity} мест</small>
+        </div>
+      `).join('')}
+    </div>
+    <div class="panel">
+      ${arr.length?arr.map(p=>`
+        <div class="person">
+          ${safeUser(p)}
+          <div class="person-info">
+            <div class="person-name">
+              ${esc([p.first_name,p.last_name].filter(Boolean).join(' ')||'Участник')}
+            </div>
+            ${state.me?.is_admin
+              ? `<div class="person-sub">${p.username?'@'+esc(p.username):''}</div>`
+              : `<div class="person-sub club-coins">${Number(p.club_coins??0)} Club coin 🪙</div>`
+            }
+          </div>
+          <span class="language">
+            ${langLabel(p.language)}<br>Стол №${p.table_number??'—'}
+          </span>
+        </div>
+      `).join(''):'<div class="empty">Пока нет подтверждённых участников</div>'}
+    </div>
+  `;
+}
+
       <h1>Участники встречи</h1>
       <p class="muted">${e?.approved_count || 0} из ${e?.capacity || 0}</p>
     </section>
