@@ -1067,3 +1067,18 @@ html[data-winter-theme="dark"] {
   --psc-border-soft: rgba(107,171,228,.49);
   --psc-shadow: 0 7px 22px rgba(3,16,41,.28);
 }
+
+/* Убираем плавающую надпись "Смена темы".
+   Сама звезда-кнопка продолжает работать. */
+
+#app .winter-theme-switch .winter-theme-label,
+#app .winter-theme-switch .winter-theme-switch-label {
+  display: none !important;
+}
+
+/* Не меняем положение самой звезды */
+#app .winter-theme-switch {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
