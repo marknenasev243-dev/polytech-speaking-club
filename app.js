@@ -68,7 +68,20 @@ else if(state.view==='participants'){
               ${esc([p.first_name,p.last_name].filter(Boolean).join(' ')||'Участник')}
             </div>
             ${state.me?.is_admin && p.username ? `<div class="person-sub">@${esc(p.username)}</div>` : ''}
-            <button type="button" class="person-sub club-coins club-coins-link" data-action="my-stats">${Number(p.club_coins??0)} 🪙</button>
+            <button type="button" class="person-sub club-coins club-coins-link" data-action="my-stats">
+${Number(p.club_coins??0)}
+<span class="club-coin-icon" aria-label="Club coin">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path
+      d="M12 2.5l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3.1-5.8 3.1 1.1-6.5-4.7-4.6 6.5-.9z"
+      fill="#FFF1B3"
+      stroke="#955B0A"
+      stroke-width="1.6"
+      stroke-linejoin="round"
+    />
+  </svg>
+</span>
+</button>
           </div>
           <span class="language">
             ${langLabel(p.language)}<br>Стол №${p.table_number??'—'}
