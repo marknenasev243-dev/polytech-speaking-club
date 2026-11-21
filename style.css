@@ -452,7 +452,13 @@ body > .winter-theme-switch {
 body > .winter-theme-switch.winter-theme-obstructed {
   opacity: 1 !important;
   visibility: visible !important;
-  pointer-events: none !important;
+ 
+body > .winter-theme-switch.winter-theme-obstructed {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
 }
 
 body > .winter-theme-switch .winter-theme-ring {
