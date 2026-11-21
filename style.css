@@ -1,4 +1,5 @@
 
+
 }
 :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:#171a20;background:#fff;font-synthesis:none}*{box-sizing:border-box}body{margin:0}button,input,textarea,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.48;cursor:not-allowed}a{color:#087cf8}#app{max-width:780px;margin:0 auto;padding:18px 18px calc(90px + env(safe-area-inset-bottom))}.loading{text-align:center;padding:100px 12px;color:#777}.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:4px 0 28px}.brand{display:flex;align-items:center;gap:11px;font-size:17px;font-weight:800}.logo{width:44px;height:44px;background:#e6f3ff;border-radius:15px;display:grid;place-items:center;font-size:25px}.tag{font-size:12px;color:#097af2;background:#e6f2ff;padding:8px 11px;border-radius:20px}.hero{text-align:center;margin:24px 0 22px}.hero-emoji{font-size:57px;line-height:1.4}.hero h1{font-size:29px;margin:8px 0 7px;letter-spacing:-.6px}.muted{color:#8b8d96}.hero p{margin:0;font-size:15px}.tabs{display:flex;border:1.5px solid #0c82ff;border-radius:13px;overflow:hidden;margin:20px 0 25px}.tabs button{flex:1;border:0;background:white;padding:13px 8px;font-weight:700;color:#1a1a1a}.tabs button.active{color:#087bfa;background:#e7f2ff}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 13px}.event-card{min-width:0;cursor:pointer}.poster{aspect-ratio:1/1;border-radius:20px;overflow:hidden;background:linear-gradient(140deg,#b5e5ff,#2373d6);display:flex;align-items:center;justify-content:center;position:relative}.poster img{width:100%;height:100%;object-fit:cover}.poster .fallback{font-size:62px}.poster .lang-flag{position:absolute;bottom:9px;right:10px;background:#fff;border-radius:20px;padding:5px 8px;font-size:14px}.event-card h3{font-size:16px;margin:9px 0 5px;line-height:1.25}.event-card .date{font-size:13px}.event-card .count{font-size:12px;color:#92939c;margin:5px 0}.pill{display:inline-flex;align-items:center;gap:5px;background:#e7f2ff;color:#087bfa;padding:6px 11px;border-radius:20px;font-weight:650;font-size:13px}.pill.green{background:#e7f8ec;color:#168445}.pill.orange{background:#fff3df;color:#ad6a00}.pill.gray{background:#f0f1f4;color:#626570}.back{background:none;border:0;color:#0c82ff;font-size:27px;padding:0}.detail{text-align:center}.detail .poster{width:175px;margin:12px auto 28px;border-radius:22px}.detail h1{font-size:27px;margin:8px 0 6px}.detail .description{white-space:pre-wrap;text-align:left;line-height:1.5;background:#f7f9fc;padding:15px;border-radius:14px}.detail .meta{font-size:16px;margin:12px 0}.detail .location{color:#52545c}.detail .places{margin:20px auto}.primary{border:0;background:#087cfa;color:white;border-radius:15px;padding:15px 17px;font-weight:750;width:100%;font-size:16px}.secondary{border:0;background:#e5f1ff;color:#087cf8;border-radius:15px;padding:14px 17px;font-weight:700;width:100%;font-size:16px}.danger{border:1px solid #f5c9c9;background:#fff;color:#c63232;border-radius:14px;padding:12px 15px;font-weight:700}.btnrow{display:flex;gap:8px}.btnrow>*{flex:1}.section-title{font-size:20px;margin:24px 0 12px}.panel{border:1px solid #e5e5ee;border-radius:18px;padding:15px;margin:14px 0;text-align:left}.person{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #f0f1f4}.person:last-child{border-bottom:0}.avatar{width:48px;height:48px;border-radius:50%;background:#e8f3ff;display:grid;place-items:center;color:#087cf8;font-size:20px;font-weight:700;overflow:hidden;flex-shrink:0}.avatar img{width:100%;height:100%;object-fit:cover}.person-info{min-width:0;flex:1}.person-name{font-weight:700;overflow-wrap:anywhere}.person-sub{font-size:12px;color:#91939b;margin-top:4px}.language{font-size:12px;white-space:nowrap}.empty{text-align:center;padding:45px 15px;color:#8b8d96}.empty .emoji{font-size:45px;margin-bottom:10px}.field{display:block;font-size:13px;font-weight:650;margin:13px 0 6px}.control{width:100%;padding:12px;border:1px solid #d9dce6;border-radius:11px;background:white;color:#171a20;outline-color:#087cf8}textarea.control{min-height:90px;resize:vertical}.choices{display:flex;gap:9px;margin:12px 0 18px}.choice{flex:1;border:1.5px solid #dce4ed;border-radius:13px;padding:15px 7px;background:white;font-weight:650}.choice.selected{border-color:#087cfa;background:#e8f3ff;color:#087cfa}.notice{padding:12px 14px;background:#f3f8ff;border-radius:13px;color:#3d638d;font-size:13px;line-height:1.5;margin:12px 0}.admin-card{border:1px solid #e5e5ed;border-radius:16px;padding:15px;margin:13px 0}.admin-card h3{margin:0 0 8px}.admin-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.small{padding:9px 12px;border-radius:10px;font-size:13px;width:auto}.status{font-size:12px;margin:5px 0;color:#777}.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1f2b3b;color:#fff;padding:12px 20px;border-radius:12px;max-width:90%;z-index:10;box-shadow:0 6px 25px #0002}.menu{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:14px}.menu button{border:0;border-radius:11px;background:#eef4fb;padding:10px 13px;color:#1379e6;font-weight:650}.line{height:1px;background:#edf0f4;margin:18px 0}.smallnote{font-size:12px;color:#8b8d96}.filter{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}.filter button{border:1px solid #d7e6f9;border-radius:20px;padding:8px 11px;background:#fff;color:#087cf8}.filter button.active{background:#087cf8;color:white}.admin-reg{padding:12px 0;border-bottom:1px solid #eee}.admin-reg:last-child{border:0}@media(min-width:600px){.grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}.hero{margin-top:35px}.detail .poster{width:220px}}
 
@@ -1070,244 +1071,185 @@ html[data-winter-theme="dark"] {
   --psc-shadow: 0 7px 22px rgba(3,16,41,.28);
 }
 
-/* POLYTECH SPEAKING CLUB — МОИ ПОСЕЩЕНИЯ: ЕДИНОЕ ЗИМНЕЕ СТЕКЛО
-   Добавить в самый конец текущего style.css.
-   Меняются только фон, цвет, обводка и тень; геометрия и логика сохраняются. */
+/* ================================================================
+   POLYTECH SPEAKING CLUB | ОДИН СТИЛЬ ДЛЯ 5 ЭКРАНОВ
+   «Мои посещения», создание/редактирование встречи,
+   управление организаторами и список записавшихся.
+   Одни и те же переменные, без повторяющихся патчей.
+   Размеры и порядок существующих кнопок не изменяются.
+   ================================================================ */
 
-/* Палитра как в панели организатора. */
+:root,
 html[data-winter-theme="light"] {
-  --stats-glass: rgba(250, 253, 255, .88);
-  --stats-glass-soft: rgba(239, 248, 255, .76);
-  --stats-glass-strong: rgba(255, 255, 255, .94);
-  --stats-ink: #173451;
-  --stats-muted: #496681;
-  --stats-line: rgba(117, 190, 242, .75);
-  --stats-shadow: 0 5px 18px rgba(21, 87, 150, .13);
+  --psc-page-glass: rgba(218, 228, 237, .70);
+  --psc-page-edge: rgba(138, 197, 239, .73);
+  --psc-page-shadow: 0 7px 24px rgba(17, 63, 110, .17);
 }
 html[data-winter-theme="dark"] {
-  --stats-glass: rgba(13, 38, 77, .91);
-  --stats-glass-soft: rgba(20, 51, 91, .78);
-  --stats-glass-strong: rgba(12, 34, 70, .94);
-  --stats-ink: #f5faff;
-  --stats-muted: #d5e8fa;
-  --stats-line: rgba(119, 187, 248, .67);
-  --stats-shadow: 0 7px 22px rgba(3, 16, 41, .26);
+  --psc-page-glass: rgba(16, 39, 72, .78);
+  --psc-page-edge: rgba(113, 178, 235, .60);
+  --psc-page-shadow: 0 8px 26px rgba(0, 13, 36, .28);
 }
 
-/* Главная секция «Мои посещения», как стеклянные секции организатора. */
-#app .hero.stats-hero {
-  background: var(--stats-glass, rgba(250,253,255,.88)) !important;
-  color: var(--stats-ink, #173451) !important;
-  border-color: var(--stats-line, #8ac9f5) !important;
-  box-shadow: var(--stats-shadow, 0 5px 18px rgba(21,87,150,.13)) !important;
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+/* А single visual background behind each page, no padding or margins
+   added to the original controls. The pseudo-element does not receive taps. */
+#app .psc-glass-page {
+  position: relative;
+  isolation: isolate;
+  z-index: 0;
+  color: var(--psc-text);
 }
-
-/* Название, пояснение и число посещений — один визуальный язык. */
-#app .hero.stats-hero h1,
-#app .hero.stats-hero h2 {
-  background: var(--stats-glass-strong, rgba(255,255,255,.94)) !important;
-  color: var(--stats-ink, #173451) !important;
-  border-color: var(--stats-line, #8ac9f5) !important;
-  box-shadow: var(--stats-shadow, 0 5px 18px rgba(21,87,150,.13)) !important;
-  text-shadow: none !important;
-}
-#app .hero.stats-hero p,
-#app .hero.stats-hero .muted {
-  background: var(--stats-glass-soft, rgba(239,248,255,.76)) !important;
-  color: var(--stats-muted, #496681) !important;
-  border-color: var(--stats-line, #8ac9f5) !important;
-  text-shadow: none !important;
-}
-
-/* Все заголовки, подписи, поиск, панели рейтинга и истории на экране статистики. */
-#app:has(.hero.stats-hero) > h2,
-#app:has(.hero.stats-hero) > h3 {
-  background: var(--stats-glass, rgba(250,253,255,.88)) !important;
-  color: var(--stats-ink, #173451) !important;
-  border-color: var(--stats-line, #8ac9f5) !important;
-  box-shadow: var(--stats-shadow, 0 5px 18px rgba(21,87,150,.13)) !important;
-  text-shadow: none !important;
-}
-#app:has(.hero.stats-hero) > p.muted,
-#app:has(.hero.stats-hero) > .smallnote {
-  background: var(--stats-glass-soft, rgba(239,248,255,.76)) !important;
-  color: var(--stats-muted, #496681) !important;
-  border-color: var(--stats-line, #8ac9f5) !important;
-}
-#app:has(.hero.stats-hero) .panel,
-#app:has(.hero.stats-hero) .club-search-results {
-  background: var(--stats-glass, rgba(250,253,255,.88)) !important;
-  color: var(--stats-ink, #173451) !important;
-  border-color: var(--stats-line, #8ac9f5) !important;
-  box-shadow: var(--stats-shadow, 0 5px 18px rgba(21,87,150,.13)) !important;
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-}
-#app:has(.hero.stats-hero) .club-search,
-#app:has(.hero.stats-hero) input[type="search"] {
-  background: var(--stats-glass-strong, rgba(255,255,255,.94)) !important;
-  color: var(--stats-ink, #173451) !important;
-  border-color: var(--stats-line, #8ac9f5) !important;
-}
-#app:has(.hero.stats-hero) .club-search::placeholder,
-#app:has(.hero.stats-hero) input[type="search"]::placeholder {
-  color: var(--stats-muted, #496681) !important;
-  opacity: 1;
-}
-#app:has(.hero.stats-hero) .empty,
-#app:has(.hero.stats-hero) .person-sub {
-  color: var(--stats-muted, #496681) !important;
-}
-#app:has(.hero.stats-hero) .person-name,
-#app:has(.hero.stats-hero) .panel b,
-#app:has(.hero.stats-hero) .panel strong {
-  color: var(--stats-ink, #173451) !important;
-}
-
-/* Статистика Club coin: существующие две маленькие плашки остаются отдельными. */
-#app:has(.hero.stats-hero) .clubcoin-hints {
-  background: transparent !important;
-  border-color: transparent !important;
-  box-shadow: none !important;
-}
-#app:has(.hero.stats-hero) .clubcoin-info,
-#app:has(.hero.stats-hero) .clubcoin-shop-btn {
-  background: var(--stats-glass-strong, rgba(255,255,255,.94)) !important;
-  color: var(--stats-ink, #173451) !important;
-  border-color: var(--stats-line, #8ac9f5) !important;
-  box-shadow: var(--stats-shadow, 0 5px 18px rgba(21,87,150,.13)) !important;
-}
-
-/* Медаль и её голубой квадрат намеренно не изменяются. */
-
-/* ================================================================
-   PSC · Новогодняя стрелочка у подписи переключателя темы
-   Переключатель создаётся скриптом непосредственно внутри <body>.
-   Не изменяем положение звезды, кнопки или оформление страниц.
-   Стрелка внутри подписи, поэтому автоматически скрывается вместе
-   с подписью, когда кнопка пересекает другие элементы интерфейса.
-   ================================================================ */
-body > .winter-theme-switch .winter-theme-label {
-  /* Подпись остаётся на прежнем месте. */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1px;
-  text-align: center;
-}
-
-body > .winter-theme-switch .winter-theme-label::before {
-  content: "↑";
-  display: block;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-  font-size: 10px;
-  line-height: 1;
-  font-weight: 700;
-  letter-spacing: 1px;
-  white-space: nowrap;
-  color: #9d681e;
-  text-shadow: 0 0 3px rgba(255, 255, 255, .65);
+#app .psc-glass-page::before {
+  content: "";
+  position: absolute;
+  inset: -12px -3px -10px;
+  z-index: -1;
+  border-radius: 21px;
+  background: var(--psc-page-glass);
+  border: 1px solid var(--psc-page-edge);
+  box-shadow: var(--psc-page-shadow);
+  -webkit-backdrop-filter: blur(11px);
+  backdrop-filter: blur(11px);
   pointer-events: none;
 }
 
-html[data-winter-theme="dark"] body > .winter-theme-switch
-.winter-theme-label::before {
-  color: #ffde95;
-  text-shadow: 0 0 5px rgba(255, 221, 158, .55);
-}
-
-/* Если JavaScript скрыл подпись из-за пересечения, скрыта и стрелка. */
-body > .winter-theme-switch.winter-label-obstructed
-.winter-theme-label::before {
-  display: none;
-}
-
-/* Одна общая подложка в разделе "Мои посещения" */
-
-#app .stats-page-glass {
-  position: relative;
-  margin: 14px 0 20px;
-  padding: 12px 0 8px;
-  border-radius: 22px;
-  background: rgba(215, 225, 234, 0.64) !important;
-  border: 1px solid rgba(153, 200, 238, 0.72);
-  box-shadow: 0 6px 22px rgba(20, 65, 110, 0.13);
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-  color: var(--psc-text);
-}
-
-/* Тёмная тема */
-html[data-winter-theme="dark"] #app .stats-page-glass {
-  background: rgba(18, 41, 73, 0.72) !important;
-  border-color: rgba(112, 172, 231, 0.55);
-  box-shadow: 0 8px 25px rgba(0, 13, 35, 0.25);
-}
-
-/* Убираем старый большой прямоугольник вокруг медали */
-#app .stats-page-glass .hero {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  -webkit-backdrop-filter: none !important;
-  backdrop-filter: none !important;
-}
-
-/* У Club coin нет второй большой подложки */
-#app .stats-page-glass .clubcoin-hints {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  -webkit-backdrop-filter: none !important;
-  backdrop-filter: none !important;
-}
-
-/* Медаль остаётся в своём голубом квадрате */
-#app .stats-page-glass .hero-emoji {
-  background: linear-gradient(145deg, #d0faff, #91e0ff) !important;
-}
-
-
-
-/* PSC · Final consistent glass surfaces. No geometry changes. */
-#app .stats-page-glass {
-  background: rgba(218, 228, 237, .68) !important;
+/* Один и тот же тип небольших светлых/тёмных внутренних карточек. */
+#app .psc-glass-page .panel,
+#app .psc-glass-page .admin-card,
+#app .psc-glass-page .club-search-results {
+  background: var(--psc-surface) !important;
   border-color: var(--psc-border-soft) !important;
-  box-shadow: var(--psc-shadow) !important;
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-}
-html[data-winter-theme="dark"] #app .stats-page-glass {
-  background: rgba(17, 40, 75, .77) !important;
-}
-#app .stats-page-glass .hero.stats-hero {
-  background: transparent !important;
-  border: 0 !important;
-  box-shadow: none !important;
-  -webkit-backdrop-filter: none !important;
-  backdrop-filter: none !important;
-}
-#app .stats-page-glass .clubcoin-hints {
-  background: transparent !important;
-  border: 0 !important;
-  box-shadow: none !important;
-  -webkit-backdrop-filter: none !important;
-  backdrop-filter: none !important;
-}
-#app #event-form .field,
-#app #organizer-form .field {
   color: var(--psc-text) !important;
+  box-shadow: var(--psc-shadow) !important;
+}
+#app .psc-glass-page .control,
+#app .psc-glass-page input[type="search"],
+#app .psc-glass-page textarea,
+#app .psc-glass-page select {
+  background: var(--psc-surface-strong) !important;
+  border-color: var(--psc-border) !important;
+  color: var(--psc-text) !important;
+}
+#app .psc-glass-page .control::placeholder,
+#app .psc-glass-page input::placeholder,
+#app .psc-glass-page textarea::placeholder {
+  color: var(--psc-muted) !important;
+  opacity: 1;
+}
+#app .psc-glass-page .field,
+#app .psc-glass-page .person-name,
+#app .psc-glass-page .admin-reg,
+#app .psc-glass-page .status {
+  color: var(--psc-text) !important;
+}
+#app .psc-glass-page .person-sub,
+#app .psc-glass-page .smallnote,
+#app .psc-glass-page .empty,
+#app .psc-glass-page p.muted {
+  color: var(--psc-muted) !important;
+}
+
+/* Заголовки, ранее оформлявшиеся только для прямых детей #app,
+   сохраняют такое же оформление после объединения в стекло. */
+#app .psc-glass-page > h1,
+#app .psc-glass-page > h2,
+#app .psc-glass-page > h3 {
+  display: table;
+  max-width: 100%;
+  padding: 9px 15px;
+  border: 1px solid var(--psc-border-soft);
+  border-radius: 16px;
+  background: var(--psc-surface) !important;
+  color: var(--psc-text) !important;
+  box-shadow: var(--psc-shadow);
+  overflow-wrap: anywhere;
+}
+#app .psc-glass-page > p.muted {
+  display: table;
+  max-width: 100%;
+  padding: 6px 10px;
+  border: 1px solid var(--psc-border-soft);
+  border-radius: 11px;
   background: var(--psc-surface-soft) !important;
 }
-#app #event-form .control,
-#app #organizer-form .control {
+
+/* «Мои посещения»: только одна большая подложка вокруг ВСЕГО
+   раздела, до кнопки магазина Club coin. Не включая меню снизу. */
+#app .psc-glass-page--stats .hero.stats-hero {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+#app .psc-glass-page--stats .hero.stats-hero h1,
+#app .psc-glass-page--stats .hero.stats-hero h2 {
   background: var(--psc-surface-strong) !important;
   color: var(--psc-text) !important;
-  border-color: var(--psc-border) !important;
+  border-color: var(--psc-border-soft) !important;
 }
+#app .psc-glass-page--stats .hero.stats-hero p {
+  background: var(--psc-surface-soft) !important;
+  color: var(--psc-muted) !important;
+  border-color: var(--psc-border-soft) !important;
+}
+#app .psc-glass-page--stats .clubcoin-hints {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+#app .psc-glass-page--stats .clubcoin-info,
+#app .psc-glass-page--stats .clubcoin-shop-btn {
+  background: var(--psc-surface-strong) !important;
+  border-color: var(--psc-border) !important;
+  color: var(--psc-text) !important;
+}
+#app .psc-glass-page--stats .clubcoin-shop-btn { color: var(--psc-accent) !important; }
+/* Медаль и её оригинальный голубой квадрат не изменяются. */
+
+/* Создание и редактирование — одинаковая стеклянная форма. */
+#app .psc-glass-page--editor #event-form,
+#app .psc-glass-page--organizers #organizer-form {
+  background: var(--psc-surface-soft) !important;
+  border: 1px solid var(--psc-border-soft) !important;
+  border-radius: 19px;
+  box-shadow: var(--psc-shadow) !important;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  /* Не добавляем отступы: поля остаются на прежних местах. */
+}
+#app .psc-glass-page--editor .field,
+#app .psc-glass-page--organizers .field {
+  background: var(--psc-surface-soft) !important;
+  border-radius: 7px;
+  color: var(--psc-text) !important;
+}
+html[data-winter-theme="dark"] #app .psc-glass-page input[type="datetime-local"],
+html[data-winter-theme="dark"] #app .psc-glass-page input[type="date"],
+html[data-winter-theme="dark"] #app .psc-glass-page input[type="time"] {
+  color-scheme: dark;
+}
+
+/* Участники из панели организатора: каждый человек — стеклянная
+   карточка, кнопки «Отменить запись» остаются на месте и активны. */
+#app .psc-glass-page--requests .admin-reg {
+  background: var(--psc-surface-soft) !important;
+  color: var(--psc-text) !important;
+  border-bottom: 1px solid var(--psc-border-soft) !important;
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgba(12, 57, 101, .13);
+  -webkit-backdrop-filter: blur(7px);
+  backdrop-filter: blur(7px);
+}
+#app .psc-glass-page--requests .admin-reg .person-sub,
+#app .psc-glass-page--requests .admin-reg .status {
+  color: var(--psc-muted) !important;
+}
+
+/* Надпись под фоновой звездой со стрелкой вверх без снежинок.
+   Переключатель создаётся winter-theme-toggle.js внутри body. */
 body > .winter-theme-switch .winter-theme-label {
   display: flex;
   flex-direction: column;
@@ -1315,14 +1257,15 @@ body > .winter-theme-switch .winter-theme-label {
   text-align: center;
 }
 body > .winter-theme-switch .winter-theme-label::before {
-  content: "↑" !important;
-  display: block !important;
-  font-size: 12px !important;
-  font-weight: 800 !important;
-  line-height: 1.1 !important;
-  color: #a27024 !important;
-  pointer-events: none !important;
+  content: "↑";
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.1;
+  color: #9d681e;
+  text-shadow: 0 0 4px rgba(255,255,255,.6);
+  pointer-events: none;
 }
 html[data-winter-theme="dark"] body > .winter-theme-switch .winter-theme-label::before {
-  color: #ffe2a4 !important;
+  color: #ffe2a4;
 }
