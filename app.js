@@ -65,7 +65,6 @@ html += `
   </div>
 `;
 
-
 }
 else if(state.view==='organizers'){
   const rows=state.organizers.map(o=>`<div class="person"><div class="person-info"><div class="person-name">${esc([o.first_name,o.last_name].filter(Boolean).join(' ')||'Telegram ID '+o.telegram_id)}</div><div class="person-sub">${o.username?'@'+esc(o.username)+' · ':''}ID: ${o.telegram_id}${o.is_owner?' · Главный организатор':''}</div></div>${o.is_owner?'':`<button class="danger small" data-action="remove-organizer" data-id="${o.telegram_id}">Удалить</button>`}</div>`).join('');
