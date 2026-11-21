@@ -1226,3 +1226,41 @@ html[data-winter-theme="dark"]
 #app .winter-theme-switch .winter-theme-switch-label::before {
   color: #ffdf9b;
 }
+
+/* Новогодняя стрелочка над кнопкой смены темы */
+
+#app .winter-theme-switch .winter-theme-label,
+#app .winter-theme-switch .winter-theme-switch-label {
+  display: block !important;
+  position: relative !important;
+  overflow: visible !important;
+  text-align: center !important;
+}
+
+/* Стрелочка со снежинками */
+#app .winter-theme-switch .winter-theme-label::before,
+#app .winter-theme-switch .winter-theme-switch-label::before {
+  content: "❄ ↑ ❄" !important;
+  display: block !important;
+  position: relative !important;
+  font-size: 12px !important;
+  line-height: 15px !important;
+  letter-spacing: 1px !important;
+  color: #ffdf93 !important;
+  text-align: center !important;
+  margin-bottom: 3px !important;
+  text-shadow: 0 0 5px #ffffff;
+  pointer-events: none !important;
+}
+
+/* Светлая тема */
+html[data-winter-theme="light"]
+#app .winter-theme-switch .winter-theme-label::before {
+  color: #a87320 !important;
+}
+
+/* Тёмная тема */
+html[data-winter-theme="dark"]
+#app .winter-theme-switch .winter-theme-label::before {
+  color: #ffe6aa !important;
+}
