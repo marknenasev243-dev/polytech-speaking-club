@@ -1,8 +1,7 @@
-
 const tg=window.Telegram?.WebApp;
 tg?.ready();tg?.expand();
 const root=document.getElementById('app');
-const state={me:null,events:[],view:'all',selected:null,participants:[],tables:[],adminRegs:[],organizers:[],language:'en',filter:'all',editId:null,stats:null,adminStats:[],leaderboard:[],leaderboardOpen:false,leaderboardHasMore:false};
+const state={me:null,events:[],view:'all',selected:null,participants:[],tables:[],adminRegs:[],organizers:[],language:'en',filter:'all',editId:null,stats:null,adminStats:[],leaderboard:[],leaderboardOpen:false,leaderboardHasMore:false,visitUser:null,visitHistory:[],visitCount:0};
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtDate=iso=>new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Moscow'}).format(new Date(iso))+' (МСК)';
 const langLabel=lang=>lang==='ru'?'🇷🇺 Русский':'🇬🇧 Английский';
@@ -68,10 +67,8 @@ else if(state.view==='participants'){
             <div class="person-name">
               ${esc([p.first_name,p.last_name].filter(Boolean).join(' ')||'Участник')}
             </div>
-            ${state.me?.is_admin
-              ? `<div class="person-sub">${p.username?'@'+esc(p.username):''}</div>`
-              
-: `<button type="button" class="person-sub club-coins club-coins-link" data-action="my-stats">${Number(p.club_coins??0)} 🪙</button>`
+            ${state.me?.is_admin && p.username ? `<div class="person-sub">@${esc(p.username)}</div>` : ''}
+            <button type="button" class="person-sub club-coins club-coins-link" data-action="my-stats">${Number(p.club_coins??0)} 🪙</button>
 
             }
           </div>
@@ -128,7 +125,46 @@ else if(state.view==='organizers'){
   html+=`<button class="back" data-action="admin">‹ Назад</button><h1>Организаторы</h1><p class="muted">Назначать и удалять организаторов может только главный организатор.</p><form id="organizer-form"><label class="field">Telegram ID нового организатора</label><input class="control" type="text" name="telegram_id" inputmode="numeric" pattern="[0-9]+" placeholder="Например, 123456789" required><button class="primary" type="submit">Добавить организатора</button></form><div class="panel">${rows||'<div class="empty">Организаторов пока нет</div>'}</div>${nav()}`;
 }
 else if(state.view==='admin-stats'){
-  html+=`<button class="back" data-action="admin">‹ Назад</button><section class="hero"><div class="hero-emoji">🏆</div><h1>Статистика посещений</h1><p class="muted">Все участники · завершённые встречи</p></section><div class="panel">${state.adminStats.length?state.adminStats.map(u=>`<div class="person">${safeUser(u)}<div class="person-info"><div class="person-name">${esc([u.first_name,u.last_name].filter(Boolean).join(' ')||'Участник')}</div><div class="person-sub">${u.username?'@'+esc(u.username):'Telegram ID: '+u.id}</div></div><b>${u.visits} 🏅</b></div>`).join(''):'<div class="empty">Участников пока нет</div>'}</div>${nav()}`;
+  html+=`<button class="back" data-action="admin">‹ Назад</button>
+    <section class="hero"><div class="hero-emoji">🏆</div><h1>Статистика посещений</h1>
+    <p class="muted">1 посещение = 33 Club coin · Баллы видны всем организаторам</p></section>
+    <div class="panel">${state.adminStats.length?state.adminStats.map(u=>`
+      <div class="person" style="align-items:flex-start">
+        ${safeUser(u)}
+        <div class="person-info">
+          <div class="person-name">${esc([u.first_name,u.last_name].filter(Boolean).join(' ')||'Участник')}</div>
+          <div class="person-sub">${u.username?'@'+esc(u.username):'Telegram ID: '+esc(u.id)}</div>
+          <div class="person-sub">${Number(u.visits??0)} 🏅 · ${toClubCoin(Number(u.visits??0))} 🪙</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px">
+            <button type="button" class="secondary small" data-action="visit-history" data-id="${esc(u.id)}">История изменений</button>
+            ${state.me?.is_owner?`<button type="button" class="secondary small" data-action="visit-edit" data-id="${esc(u.id)}">Изменить количество</button>`:''}
+          </div>
+        </div>
+      </div>`).join(''):'<div class="empty">Участников пока нет</div>'}</div>${nav()}`;
+}
+else if(state.view==='visit-manage'){
+  const u=state.adminStats.find(x=>String(x.id)===String(state.visitUser));
+  const name=esc([u?.first_name,u?.last_name].filter(Boolean).join(' ')||'Участник');
+  const history=Array.isArray(state.visitHistory)?state.visitHistory:[];
+  html+=`<button class="back" data-action="admin-stats">‹ К статистике</button>
+    <section class="hero"><div class="hero-emoji">🪙</div><h1>${name}</h1>
+      <p class="muted">${Number(state.visitCount)} посещений · ${toClubCoin(Number(state.visitCount))} Club coin</p>
+    </section>
+    ${state.me?.is_owner?`<form id="visit-count-form" class="panel">
+      <h3>Изменить количество</h3>
+      <p class="muted">Посещения и баллы связаны: 1 посещение = 33 🪙. Записи о конкретных встречах останутся без изменений.</p>
+      <label class="field" for="visit-count-input">Количество посещений</label>
+      <input class="control" id="visit-count-input" type="number" min="0" max="1000000" step="1" name="visits" required value="${Number(state.visitCount)}">
+      <button class="primary" type="submit">Сохранить количество</button>
+    </form>`:''}
+    <h2>История изменения баллов</h2>
+    <div class="panel">${history.length?history.map(h=>`
+      <div class="person"><div class="person-info">
+        <div class="person-name">${Number(h.old_visits??0)} → ${Number(h.new_visits??0)} посещений</div>
+        <div class="person-sub">${toClubCoin(Number(h.old_visits??0))} → ${toClubCoin(Number(h.new_visits??0))} 🪙</div>
+        <div class="person-sub">${h.created_at?fmtDate(h.created_at):''} · ${esc(h.changed_by_name||'Главный организатор')}</div>
+      </div></div>`).join(''):'<div class="empty">Ручных изменений пока нет</div>'}</div>
+    ${nav()}`;
 }
 
 root.innerHTML = html;
@@ -188,6 +224,17 @@ root.addEventListener('click',async ev=>{const b=ev.target.closest('[data-action
  else if(action==='organizers'){const r=await api('/api/admin/organizers');state.organizers=r.organizers;state.view='organizers';render()}
  else if(action==='remove-organizer'){if(confirm('Удалить этого организатора?')){await api(`/api/admin/organizers/${id}`,'DELETE');toast('Организатор удалён');const r=await api('/api/admin/organizers');state.organizers=r.organizers;render()}}
  else if(action==='admin-stats'){const r=await api('/api/admin/stats');state.adminStats=r.users;state.view='admin-stats';render()}
+  else if(action==='visit-history'||action==='visit-edit'){
+    if(!state.me?.is_admin)throw new Error('Доступно только организаторам');
+    if(action==='visit-edit'&&!state.me?.is_owner)throw new Error('Изменять посещения может только главный организатор');
+    const u=state.adminStats.find(x=>String(x.id)===String(b.dataset.id));
+    if(!u)throw new Error('Участник не найден');
+    const r=await api(`/api/admin/users/${encodeURIComponent(u.id)}/visit-adjustments`);
+    state.visitUser=u.id;
+    state.visitCount=Number(r.visits??u.visits??0);
+    state.visitHistory=Array.isArray(r.history)?r.history:[];
+    state.view='visit-manage';render();
+  }
  else if(action==='complete'){if(confirm('Завершить встречу и засчитать посещение всем, кто остался записан? Это действие нельзя отменить.')){const r=await api(`/api/admin/events/${id}/complete`,'POST',{});toast(`Встреча завершена. Засчитано: ${r.counted}`);await refresh()}}
  else if(action==='participants')await participants();
  else if(action==='filter'){state.filter=b.dataset.filter;render()}
@@ -225,6 +272,27 @@ root.addEventListener('submit',async ev=>{
    try{await api('/api/admin/organizers','POST',{telegram_id:id});toast('Организатор добавлен');const r=await api('/api/admin/organizers');state.organizers=r.organizers;render()}catch(e){toast(e.message)}
    return;
  }
+  if(ev.target.id==='visit-count-form'){
+    ev.preventDefault();
+    if(!state.me?.is_owner){toast('Изменения доступны только главному организатору');return;}
+    const raw=String(new FormData(ev.target).get('visits')??'').trim();
+    const visits=Number(raw);
+    if(!/^\d+$/.test(raw)||!Number.isSafeInteger(visits)||visits>1000000){toast('Введите целое число посещений от 0 до 1000000');return;}
+    if(visits===state.visitCount){toast('Количество посещений не изменилось');return;}
+    if(!confirm(`Установить ${visits} посещений (${toClubCoin(visits)} Club coin)?`))return;
+    try{
+      await api(`/api/admin/users/${encodeURIComponent(state.visitUser)}/visits`,'PUT',{visits});
+      const [r,users]=await Promise.all([
+        api(`/api/admin/users/${encodeURIComponent(state.visitUser)}/visit-adjustments`),
+        api('/api/admin/stats')
+      ]);
+      state.visitCount=Number(r.visits??visits);
+      state.visitHistory=Array.isArray(r.history)?r.history:[];
+      state.adminStats=users.users;
+      toast('Количество посещений изменено');render();
+    }catch(e){toast(e.message)}
+    return;
+  }
  if(ev.target.id!=='event-form')return;ev.preventDefault();const f=new FormData(ev.target);const local=f.get('starts_at');const body={title:f.get('title'),description:f.get('description'),building:f.get('building'),room:f.get('room'),capacity:Number(f.get('capacity')),table_count:Number(f.get('table_count')),table_capacity:Number(f.get('table_capacity')),duration_minutes:Number(f.get('duration_minutes')),image_url:f.get('image_url'),starts_at:`${local}:00+03:00`};try{await api(state.editId?`/api/admin/events/${state.editId}`:'/api/admin/events',state.editId?'PUT':'POST',body);toast('Встреча сохранена');state.view='admin';await refresh()}catch(e){toast(e.message)}});
 (async()=>{try{state.me=await api('/api/me');await refresh()}catch(e){root.innerHTML=`<div class="hero"><div class="hero-emoji">🔐</div><h1>Speaking Club</h1><p class="muted">${esc(e.message)}</p><div class="notice">Откройте приложение через кнопку меню вашего Telegram-бота. Для локального тестирования смотрите README.md.</div></div>`}})();
 
