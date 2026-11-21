@@ -318,7 +318,8 @@ button[data-action="register"]::after {
   width: 13px;
   height: 13px;
   display: block;
-   
+}
+
 /* Поиск участников и рейтинга */
 .club-search {
   display: block;
@@ -336,4 +337,61 @@ button[data-action="register"]::after {
   display: none !important;
 }
 
+/* ============================================================
+   Polytech Speaking Club | Уютная зимняя тема — вариант №2
+   Только оформление. Не меняет размеры, кнопки, иконки и логику.
+   Фоновый файл: winter-speaking-background.png
+   ============================================================ */
+:root { color-scheme: light; background: #e5f2ff; }
+html { min-height: 100%; background: #e5f2ff; }
+body {
+  min-height: 100vh;
+  background: #e5f2ff;
+  position: relative;
+  isolation: isolate;
+}
+/* Отдельный неподвижный фон: надёжнее на телефонах, чем background-attachment:fixed */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: #dcecff;
+  background-image: url('./winter-speaking-background.png');
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+#app { background: transparent !important; }
+/* Пропускаем зимний фон через большие белые области */
+#app .top, #app .hero, #app .detail {
+  background: transparent !important;
+  box-shadow: none;
+}
+/* Поверх фона карточки и тексты остаются читабельными */
+#app .event-card, #app .panel, #app .admin-card,
+#app .tables-grid .table-tile, #app .detail .description {
+  background-color: rgba(255,255,255,.93);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+}
+#app .tabs, #app .tabs button, #app .filter button,
+#app .control, #app .choice {
+  background-color: rgba(255,255,255,.95);
+}
+#app .tabs button.active { background-color: #e4f0ff; }
+#app .choice.selected { background-color: #e8f3ff; }
+#app .hero.stats-hero .hero-emoji,
+#app .hero:has(+ .tabs) .hero-emoji {
+  box-shadow: 0 9px 23px rgba(16,102,185,.19) !important;
+}
+/* Лёгкая ледяная прозрачность кнопок навигации, без смены их формы */
+#app .menu button {
+  background-color: rgba(239,247,255,.93);
+  border-color: #c4e1ff;
+}
+/* Уважение к системным настройкам доступности */
+@media (prefers-reduced-transparency: reduce) {
+  #app .event-card, #app .panel, #app .admin-card { background: #fff; }
 }
