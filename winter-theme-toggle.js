@@ -1,3 +1,4 @@
+
 (() => {
   'use strict';
 
@@ -53,8 +54,14 @@
     const diameter = Math.max(42, WREATH_WIDTH * imageWidth);
     const hitSize = Math.max(72, diameter + 14);
 
-    button.style.setProperty('left', `${x}px`, 'important');
-    button.style.setProperty('top', `${y}px`, 'important');
+    // The winter image is fixed to the viewport, but the click target should
+    // belong to the document. Convert the initial viewport coordinates into
+    // local coordinates in #app; then it scrolls away with the page.
+    const app = button.closest('#app');
+    if (!app) return;
+    const appRect = app.getBoundingClientRect();
+    button.style.setProperty('left', `${x - appRect.left}px`, 'important');
+    button.style.setProperty('top', `${y - appRect.top}px`, 'important');
     button.style.setProperty('width', `${hitSize}px`, 'important');
     button.style.setProperty('height', `${hitSize}px`, 'important');
     button.style.setProperty('--wreath-diameter', `${diameter}px`);
@@ -120,33 +127,15 @@
       app.appendChild(button);
     }
     positionSwitch(button);
-    syncScrollVisibility();
-  }
-
-  // A fixed star must not cover event cards or navigation while scrolling.
-  // Keep it clickable at the top; hide it when the feed is scrolled.
-  function syncScrollVisibility() {
-    const button = document.querySelector('#app .winter-theme-switch');
-    if (!button) return;
-    const scrollTop = Math.max(
-      window.scrollY || 0,
-      document.documentElement.scrollTop || 0,
-      document.body.scrollTop || 0
-    );
-    button.classList.toggle('winter-theme-switch--scrolled', scrollTop > 48);
   }
 
   function start() {
     ensureButton();
     const app = document.getElementById('app');
     if (app) new MutationObserver(ensureButton).observe(app, { childList: true });
-    syncScrollVisibility();
-    window.addEventListener('scroll', syncScrollVisibility, { passive: true });
-    // Also handles Telegram webviews with an inner scrolling container.
-    document.addEventListener('scroll', syncScrollVisibility, { passive: true, capture: true });
     window.addEventListener('resize', () => {
       const button = document.querySelector('#app .winter-theme-switch');
-      if (button) positionSwitch(button);
+      if (button && Math.abs(window.scrollY || 0) < 5) positionSwitch(button);
     }, { passive: true });
   }
 
