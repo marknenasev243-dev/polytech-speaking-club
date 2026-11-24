@@ -99,6 +99,80 @@ function readAgenda(){
       return {savedAt:data.savedAt,events:publicAgenda(data.events)};
   }catch{} return null;
 }
+/* Индикатор качества связи. Не изменяет данные и не блокирует действия. */
+const networkInfo=navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+const activeNetworkRequests=new Set();
+let connectionWarning=false, fastConnectionReplies=0;
+function weakNetworkHint(){
+  return navigator.onLine===false || !!(networkInfo &&
+    (['slow-2g','2g'].includes(networkInfo.effectiveType) ||
+     networkInfo.rtt>=1000 || (networkInfo.downlink>0 && networkInfo.downlink<=0.3)));
+}
+function syncConnectionNotice(){
+  const previous=root.querySelector('.psc-connection-warning');
+  const header=root.querySelector(':scope > .top');
+  const loading=root.querySelector(':scope > .psc-loading');
+  if(offlineMode || (!connectionWarning && !weakNetworkHint()) || (!header && !loading)){
+    previous?.remove();return;
+  }
+  if(previous)return;
+  const banner=document.createElement('div');
+  banner.className='psc-connection-warning';
+  banner.setAttribute('role','status');
+  banner.setAttribute('aria-live','polite');
+  const title=document.createElement('strong');
+  title.textContent='⚠️ Нестабильное соединение';
+  const detail=document.createElement('span');
+  detail.textContent='Интернет или сервер отвечают медленно. Загрузка может занять больше времени.';
+  banner.append(title,detail);
+  if(header)header.after(banner);else loading.prepend(banner);
+}
+function markConnectionWeak(){
+  connectionWarning=true;fastConnectionReplies=0;syncConnectionNotice();
+}
+function startNetworkMeasurement(read=true){
+  const token={started:performance.now(),slow:false,threshold:read?1800:4000};
+  activeNetworkRequests.add(token);
+  token.timer=setTimeout(()=>{token.slow=true;markConnectionWeak();},token.threshold);
+  return token;
+}
+function endNetworkMeasurement(token,outcome){
+  clearTimeout(token.timer);activeNetworkRequests.delete(token);
+  const duration=performance.now()-token.started;
+  if(outcome==='temporary' || token.slow || duration>=token.threshold){markConnectionWeak();return;}
+  if(outcome==='ok' && duration<=1200 && !weakNetworkHint() &&
+    ![...activeNetworkRequests].some(item=>item.slow)){
+    if(++fastConnectionReplies>=2){connectionWarning=false;fastConnectionReplies=0;}
+  }else if(outcome!=='neutral'){fastConnectionReplies=0;}
+  syncConnectionNotice();
+}
+function networkHintChanged(){
+  if(weakNetworkHint())markConnectionWeak();else syncConnectionNotice();
+}
+networkInfo?.addEventListener?.('change',networkHintChanged);
+window.addEventListener('offline',networkHintChanged);
+window.addEventListener('online',networkHintChanged);
+// Проверяем восстановление, только пока есть предупреждение и вкладка открыта.
+// Отдельный запрос только на чтение; он не переключает режим приложения.
+async function checkConnectionRecovery(){
+  if(!connectionWarning || offlineMode || reconnecting || !state.me ||
+     document.hidden || navigator.onLine===false || activeNetworkRequests.size)return;
+  const measurement=startNetworkMeasurement();
+  const controller=new AbortController();
+  const timeout=setTimeout(()=>controller.abort(),4000);
+  let outcome='neutral';
+  try{
+    const response=await fetch(API_BASE+'/api/me',{
+      headers:{'X-Telegram-Init-Data':tg?.initData||''},signal:controller.signal,cache:'no-store'
+    });
+    if(response.ok){await response.json();outcome='ok';}
+    else if(transientStatus.has(response.status))outcome='temporary';
+  }catch{outcome='temporary';}
+  finally{clearTimeout(timeout);endNetworkMeasurement(measurement,outcome);}
+}
+setInterval(checkConnectionRecovery,15000);
+networkHintChanged();
+
 async function api(url,method='GET',body){
   const read=method==='GET';
   if(offlineMode && !read) throw new Error('Нет связи с сервером. Изменения недоступны.');
@@ -108,14 +182,16 @@ async function api(url,method='GET',body){
     const controller=new AbortController();
     const timeout=setTimeout(()=>controller.abort(),read?4000:20000);
     let failure;
+    const measurement=startNetworkMeasurement(read);
+    let outcome='neutral';
     try{
       const r=await fetch(API_BASE+url,{method,headers,body:body===undefined?undefined:JSON.stringify(body),signal:controller.signal,cache:'no-store'});
       let data;try{data=await r.json()}catch{data=null;}
       if(!r.ok){failure=new Error(data?.error||'Ошибка запроса ('+r.status+')');failure.temporary=transientStatus.has(r.status);}
       else if(data===null){failure=new Error('Не удалось прочитать ответ сервера');failure.temporary=true;}
-      else return data;
+      else {outcome='ok';return data;}
     }catch(error){failure=new Error(read?'Нет связи с сервером':'Сервер не подтвердил результат. Проверьте данные после восстановления связи, прежде чем повторять действие.');failure.temporary=true;}
-    finally{clearTimeout(timeout);}
+    finally{clearTimeout(timeout);endNetworkMeasurement(measurement,failure?.temporary?'temporary':outcome);}
     if(!failure.temporary)throw failure;
     if(read && attempt<2){await pause(500*(attempt+1));continue;}
     if(!read) failure.message='Сервер не подтвердил результат. Проверьте данные после восстановления связи, прежде чем повторять действие.';
@@ -328,6 +404,7 @@ else if(state.view==='visit-manage'){
 }
 
 root.innerHTML = html;
+syncConnectionNotice();
 setupParticipantSearch();
 
 // A single, non-interactive glass background behind each selected screen.
