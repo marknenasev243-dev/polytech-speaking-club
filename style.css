@@ -1269,3 +1269,35 @@ body > .winter-theme-switch .winter-theme-label::before {
 html[data-winter-theme="dark"] body > .winter-theme-switch .winter-theme-label::before {
   color: #ffe2a4;
 }
+
+/* PSC: предпросмотр фото в создании и редактировании встречи. */
+#app #event-form,
+#app #event-form .poster-upload-panel,
+#app #event-form .poster-picker-actions {
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+}
+#app #event-form #poster-upload-preview {
+  box-sizing: border-box;
+  display: block !important;
+  width: auto !important;
+  height: auto !important;
+  max-width: 100% !important;
+  max-height: 260px !important;
+  max-height: min(260px, 45vh) !important;
+  object-fit: contain !important;
+  margin: 10px auto !important;
+  border: 1px solid var(--psc-border, #65bbf4) !important;
+  border-radius: 14px !important;
+  background: var(--psc-surface-soft, #eaf5ff);
+  box-shadow: 0 3px 12px rgba(16, 70, 120, .12);
+}
+#app #event-form #poster-upload-preview[hidden] {
+  display: none !important;
+}
+#app #event-form #poster-upload-status,
+#app #event-form #poster-upload-hint {
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
