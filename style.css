@@ -1301,3 +1301,42 @@ html[data-winter-theme="dark"] body > .winter-theme-switch .winter-theme-label::
   overflow-wrap: anywhere;
   min-width: 0;
 }
+
+/* Подпись непосредственно на золотой звезде */
+body > .winter-theme-switch .winter-theme-label {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+
+  background: rgba(245, 250, 255, .60) !important;
+  color: #173451 !important;
+  border: 1px solid rgba(255, 255, 255, .40) !important;
+  border-radius: 8px !important;
+
+  padding: 3px 5px !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+
+  box-shadow: 0 1px 5px rgba(0, 0, 0, .10) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  pointer-events: none !important;
+}
+
+/* Тёмная тема */
+html[data-winter-theme="dark"]
+body > .winter-theme-switch .winter-theme-label {
+  background: rgba(12, 34, 65, .60) !important;
+  color: #ffffff !important;
+  border-color: rgba(172, 212, 255, .40) !important;
+}
+
+/* Полностью убираем стрелочку */
+body > .winter-theme-switch .winter-theme-label::before,
+body > .winter-theme-switch .winter-theme-label::after {
+  content: none !important;
+  display: none !important;
+}
