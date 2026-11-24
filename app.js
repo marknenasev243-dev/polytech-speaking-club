@@ -6,20 +6,169 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const fmtDate=iso=>new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Moscow'}).format(new Date(iso))+' (МСК)';
 const langLabel=lang=>lang==='ru'?'🇷🇺 Русский':'🇬🇧 Английский';
 const statusLabel=s=>({pending:'⏳ Старая заявка ожидает обработки',approved:'✅ Вы записаны',rejected:'❌ Отклонено',cancelled:'Запись отменена'})[s]||'';
-const poster=e=>`<div class="poster">${e.image_url?`<img src="${esc(e.image_url)}" alt="Афиша мероприятия" loading="lazy" onerror="this.remove()">`:'<span class="fallback">🗣️</span>'}<span class="lang-flag">🇷🇺 🇬🇧</span></div>`;
+const poster=e=>`<div class="poster">${e.image_url?`<img src="${esc(e.image_url)}" alt="Афиша мероприятия" loading="lazy" onerror="this.parentElement.querySelector('.fallback')?.style.removeProperty('display');this.remove()"><span class="fallback" style="display:none">🗣️</span>`:'<span class="fallback">🗣️</span>'}<span class="lang-flag">🇷🇺 🇬🇧</span></div>`;
 const cap=e=>Math.max(0,e.capacity-e.approved_count);
 const safeUser=u=>`<div class="avatar">${u.photo_url?`<img src="${esc(u.photo_url)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`:esc((u.first_name||'?').slice(0,1))}</div>`;
 const API_BASE='https://yprkajaeahnxcjuawjrz.supabase.co/functions/v1/club';
+/* Загрузка афиши с телефона — файлы хранятся в Supabase Storage.
+   Токен Supabase с правами администратора здесь НИКОГДА не используется. */
+const POSTER_UPLOAD_URL='https://yprkajaeahnxcjuawjrz.supabase.co/functions/v1/poster-upload';
+const MAX_ORIGINAL_POSTER_BYTES=20*1024*1024;
+let posterPreviewObjectUrl=null;
+
+function clearPosterPreviewUrl(){
+  if(posterPreviewObjectUrl){ URL.revokeObjectURL(posterPreviewObjectUrl); posterPreviewObjectUrl=null; }
+}
+
+async function preparePosterImage(file){
+  if(!file || !file.size) throw new Error('Выбери фотографию');
+  if(file.size>MAX_ORIGINAL_POSTER_BYTES) throw new Error('Исходное фото слишком большое (максимум 20 МБ)');
+  if(!file.type.startsWith('image/') && !/\.(heic|heif|jpg|jpeg|png|webp)$/i.test(file.name))
+    throw new Error('Нужна фотография JPG, PNG, WEBP или HEIC');
+  const localUrl=URL.createObjectURL(file);
+  try {
+    const img=await new Promise((resolve,reject)=>{
+      const pic=new Image();
+      pic.onload=()=>resolve(pic);
+      pic.onerror=()=>reject(new Error('Телефон не смог прочитать фото. Попробуй JPG или PNG'));
+      pic.src=localUrl;
+    });
+    const maxSide=1600;
+    const k=Math.min(1,maxSide/Math.max(img.naturalWidth,img.naturalHeight));
+    const canvas=document.createElement('canvas');
+    canvas.width=Math.max(1,Math.round(img.naturalWidth*k));
+    canvas.height=Math.max(1,Math.round(img.naturalHeight*k));
+    const ctx=canvas.getContext('2d');
+    if(!ctx) throw new Error('Не удалось обработать фотографию');
+    // Белый фон для PNG с прозрачностью — JPEG не поддерживает прозрачность.
+    ctx.fillStyle='#ffffff';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.drawImage(img,0,0,canvas.width,canvas.height);
+    const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',0.84));
+    if(!blob || !blob.size) throw new Error('Не удалось подготовить изображение');
+    if(blob.size>5*1024*1024) throw new Error('Фото после обработки слишком большое (5 МБ)');
+    return blob;
+  } finally { URL.revokeObjectURL(localUrl); }
+}
+
+async function uploadPosterImage(blob){
+  const initData=tg?.initData||'';
+  if(!initData) throw new Error('Загрузить фото можно только из Telegram');
+  const form=new FormData();
+  form.append('file',blob,'poster.jpg');
+  let response;
+  try {
+    response=await fetch(POSTER_UPLOAD_URL,{
+      method:'POST', headers:{'X-Telegram-Init-Data':initData}, body:form
+    });
+  } catch (_) {
+    throw new Error('Сервер загрузки фото недоступен. Проверь, что функция poster-upload опубликована в Supabase');
+  }
+  let data={};
+  try { data=await response.json(); } catch (_) {}
+  if(!response.ok) throw new Error(data.error||`Ошибка загрузки фото (${response.status})`);
+  if(typeof data.url!=='string'||!data.url.startsWith('https://'))
+    throw new Error('Сервер не вернул ссылку на фото');
+  return data.url;
+}
+
 const CLUB_COIN_RATE = 33;
 const toClubCoin = visits => visits * CLUB_COIN_RATE;
 // Завершённая встреча видна 30 минут после фактического завершения.
 const visibleCompletedEvent = e => e.status !== 'completed' ||
   (e.closed_at && Date.now() < Date.parse(e.closed_at) + 30 * 60 * 1000);
-async function api(url,method='GET',body){const headers={'X-Telegram-Init-Data':tg?.initData||''};if(body!==undefined)headers['Content-Type']='application/json';const r=await fetch(API_BASE+url,{method,headers,body:body===undefined?undefined:JSON.stringify(body)});let data;try{data=await r.json()}catch{data={error:'Не удалось прочитать ответ сервера'}}if(!r.ok)throw new Error(data.error||'Ошибка запроса');return data;}
+/* Устойчивость к временным сбоям: повторяем только чтение. */
+const AGENDA_CACHE_KEY='psc-public-agenda-v1';
+let offlineMode=false, retryTimer=null, reconnecting=false, cachedAt=0;
+const transientStatus=new Set([408,429,500,502,503,504,520,521,522,523,524]);
+const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+function publicAgenda(events){
+  return events.filter(e=>e && ['published','completed'].includes(e.status) &&
+    Number.isSafeInteger(Number(e.id)) && Number.isFinite(Date.parse(e.starts_at)))
+    .map(e=>({id:Number(e.id),title:String(e.title??''),description:String(e.description??''),
+      starts_at:e.starts_at,building:String(e.building??''),room:String(e.room??''),
+      status:e.status,closed_at:e.closed_at||null,
+      image_url:typeof e.image_url==='string' && /^https:\/\//i.test(e.image_url)?e.image_url:''}));
+}
+function saveAgenda(events){
+  try{localStorage.setItem(AGENDA_CACHE_KEY,JSON.stringify({savedAt:Date.now(),events:publicAgenda(events)}));}catch{}
+}
+function readAgenda(){
+  try{const data=JSON.parse(localStorage.getItem(AGENDA_CACHE_KEY)||'null');
+    if(data && Number.isFinite(data.savedAt) && Array.isArray(data.events))
+      return {savedAt:data.savedAt,events:publicAgenda(data.events)};
+  }catch{} return null;
+}
+async function api(url,method='GET',body){
+  const read=method==='GET';
+  if(offlineMode && !read) throw new Error('Нет связи с сервером. Изменения недоступны.');
+  const headers={'X-Telegram-Init-Data':tg?.initData||''};
+  if(body!==undefined)headers['Content-Type']='application/json';
+  for(let attempt=0;attempt<(read?3:1);attempt++){
+    const controller=new AbortController();
+    const timeout=setTimeout(()=>controller.abort(),read?4000:20000);
+    let failure;
+    try{
+      const r=await fetch(API_BASE+url,{method,headers,body:body===undefined?undefined:JSON.stringify(body),signal:controller.signal,cache:'no-store'});
+      let data;try{data=await r.json()}catch{data=null;}
+      if(!r.ok){failure=new Error(data?.error||'Ошибка запроса ('+r.status+')');failure.temporary=transientStatus.has(r.status);}
+      else if(data===null){failure=new Error('Не удалось прочитать ответ сервера');failure.temporary=true;}
+      else return data;
+    }catch(error){failure=new Error(read?'Нет связи с сервером':'Сервер не подтвердил результат. Проверьте данные после восстановления связи, прежде чем повторять действие.');failure.temporary=true;}
+    finally{clearTimeout(timeout);}
+    if(!failure.temporary)throw failure;
+    if(read && attempt<2){await pause(500*(attempt+1));continue;}
+    if(!read) failure.message='Сервер не подтвердил результат. Проверьте данные после восстановления связи, прежде чем повторять действие.';
+    if(!reconnecting)enterOffline();
+    throw failure;
+  }
+}
+function scheduleReconnect(){
+  if(retryTimer!==null)return;
+  retryTimer=setTimeout(()=>{retryTimer=null; reconnect();},15000);
+}
+function enterOffline(){
+  if(!offlineMode){
+    const cache=readAgenda();
+    state.events=cache?.events||[];cachedAt=cache?.savedAt||0;
+    state.me=null;state.view='all';state.selected=null;
+    state.participants=[];state.tables=[];state.adminRegs=[];state.organizers=[];
+    state.stats=null;state.adminStats=[];state.leaderboard=[];state.visitHistory=[];
+    offlineMode=true;renderOffline();
+  }
+  scheduleReconnect();
+}
+function renderOffline(){
+  const e=state.view==='detail'?state.events.find(x=>x.id===state.selected):null;
+  const events=state.events.filter(x=>x.status!=='cancelled' && visibleCompletedEvent(x));
+  const banner=`<div class="notice" role="status"><b>${cachedAt?'Показана сохранённая афиша':'Сервис временно недоступен'}</b><br>${cachedAt?'Обновлено: '+esc(new Date(cachedAt).toLocaleString('ru-RU'))+'. Информация может быть устаревшей.':'Сохранённой афиши пока нет.'}<br>Запись и другие действия недоступны. Связь проверяется автоматически.<br><button class="secondary small" data-action="offline-retry">Повторить сейчас</button></div>`;
+  root.innerHTML=top()+banner+(e?`<button class="back" data-action="all">‹ Назад</button><section class="detail">${poster(e)}<h1>${esc(e.title)}</h1><div class="meta">📅 ${fmtDate(e.starts_at)}</div><div class="meta location">📍 ${esc(e.building)}, ауд. ${esc(e.room)}</div>${e.description?`<p class="description">${esc(e.description)}</p>`:''}<div class="notice">Наличие мест неизвестно. Запись временно недоступна.</div></section>`:`<section class="hero"><div class="hero-emoji">🏅</div><h1>Афиша встреч</h1></section>${events.length?`<div class="grid">${events.map(x=>`<article class="event-card" data-action="event" data-id="${x.id}">${poster(x)}<h3>${esc(x.title)}</h3><div class="date">${fmtDate(x.starts_at)}</div><div class="count">Наличие мест неизвестно</div></article>`).join('')}</div>`:'<div class="notice">Нет сохранённых встреч для показа.</div>'}`);
+}
+function startupError(e){
+  root.innerHTML=`<div class="hero"><div class="hero-emoji">🔐</div><h1>Speaking Club</h1><p class="muted">${esc(e.message)}</p><div class="notice">Откройте приложение через кнопку меню вашего Telegram-бота или попробуйте позже.</div><button class="secondary" data-action="offline-retry">Повторить</button></div>`;
+}
+async function reconnect(){
+  if(reconnecting)return;
+  if(retryTimer!==null){clearTimeout(retryTimer);retryTimer=null;}
+  reconnecting=true;
+  try{
+    const me=await api('/api/me');
+    const r=await api('/api/events');
+    if(!Array.isArray(r.events)){const e=new Error('Некорректный ответ афиши');e.temporary=true;throw e;}
+    state.me=me;state.events=r.events;saveAgenda(r.events);
+    const wasOffline=offlineMode;offlineMode=false;state.view='all';state.selected=null;
+    render();if(wasOffline)toast('Связь восстановлена. Афиша обновлена.');
+  }catch(e){
+    if(e.temporary){enterOffline();scheduleReconnect();}
+    else{offlineMode=false;state.me=null;state.events=[];startupError(e);}
+  }finally{reconnecting=false;}
+}
+window.addEventListener('online',()=>{if(offlineMode)reconnect();});
+
 function toast(msg){document.querySelector('.toast')?.remove();const el=document.createElement('div');el.className='toast';el.textContent=msg;document.body.append(el);setTimeout(()=>el.remove(),3500)}
 function top(){return `<div class="top"><div class="brand"><span class="logo">🌍</span><span>Speaking Club<br><span class="smallnote">Московский Политех</span></span></div><span class="tag">Участие бесплатно</span></div>`}
 function nav(){return `<div class="menu"><button data-action="all">Афиша</button><button data-action="mine">Мои записи</button><button data-action="my-stats">🏅 Мои посещения</button>${state.me?.is_admin?'<button data-action="admin">⚙️ Организатор</button>':''}</div>`}
-function render(){let html=top();if(state.view==='all'||state.view==='mine'){const mine=state.view==='mine';
+function render(){if(offlineMode){renderOffline();return;}let html=top();if(state.view==='all'||state.view==='mine'){const mine=state.view==='mine';
 const events=state.events.filter(e=>
   e.status!=='cancelled' &&
   visibleCompletedEvent(e) &&
@@ -98,7 +247,7 @@ state.events.filter(e =>
    (e.cancelled_at && Date.now() < Date.parse(e.cancelled_at) + 120000))
 ).map(e=>
 `<div class="admin-card"><h3>${esc(e.title)}</h3><div class="smallnote">${fmtDate(e.starts_at)} · ${esc(e.room)}</div><div class="status">Записано: ${e.approved_count}/${e.capacity} · ${e.status==='cancelled'?'Отменено':e.status==='completed'?'Завершено':'Опубликовано'}</div><div class="admin-actions"><button class="secondary small" data-action="requests" data-id="${e.id}">Участники (${e.approved_count})</button>${e.status==='published'?`<button class="secondary small" data-action="edit" data-id="${e.id}">Изменить</button><button class="primary small" data-action="complete" data-id="${e.id}">✅ Завершить встречу</button>`:''}${e.status!=='completed'?`<button class="danger small" data-action="toggle-status" data-id="${e.id}">${e.status==='cancelled'?'Восстановить':'Отменить встречу'}</button>`:''}</div></div>`).join('')}${nav()}`;}
-else if(state.view==='editor'){const e=state.events.find(x=>x.id===state.editId);html+=`<button class="back" data-action="admin">‹ Назад</button><h1>${e?'Редактировать встречу':'Новая встреча'}</h1><form id="event-form"><label class="field">Название</label><input class="control" name="title" maxlength="120" required value="${esc(e?.title||'Разговорный клуб')}"><label class="field">Описание</label><textarea class="control" name="description" maxlength="3000">${esc(e?.description||'')}</textarea><label class="field">Дата и время (Москва)</label><input class="control" name="starts_at" type="datetime-local" required value="${e?esc(new Date(new Date(e.starts_at).getTime()+3*3600000).toISOString().slice(0,16)):''}"><label class="field">Корпус / адрес</label><input class="control" name="building" maxlength="180" required placeholder="Москва, ул. Большая Семёновская, д. 38" value="${esc(e?.building||'')}"><label class="field">Аудитория</label><input class="control" name="room" maxlength="60" required placeholder="А-305" value="${esc(e?.room||'')}"><label class="field">Количество мест</label><input class="control" name="capacity" type="number" min="1" max="10000" required value="${e?.capacity||48}"><label class="field">Количество столов</label><input class="control" name="table_count" type="number" min="1" max="50" required value="${e?.table_count||8}"><label class="field">Мест за столом</label><input class="control" name="table_capacity" type="number" min="1" max="30" required value="${e?.table_capacity||6}"><label class="field">Длительность встречи (минут)</label><input class="control" name="duration_minutes" type="number" min="15" max="480" required value="${e?.duration_minutes||90}"><label class="field">Ссылка на изображение (необязательно, HTTPS)</label><input class="control" name="image_url" type="url" placeholder="https://..." value="${esc(e?.image_url||'')}"><div class="notice">Время вводится по Москве (UTC+3). Для записи доступны только будущие встречи.</div><button class="primary" type="submit">Сохранить встречу</button></form>`;}
+else if(state.view==='editor'){const e=state.events.find(x=>x.id===state.editId);html+=`<button class="back" data-action="admin">‹ Назад</button><h1>${e?'Редактировать встречу':'Новая встреча'}</h1><form id="event-form"><label class="field">Название</label><input class="control" name="title" maxlength="120" required value="${esc(e?.title||'Разговорный клуб')}"><label class="field">Описание</label><textarea class="control" name="description" maxlength="3000">${esc(e?.description||'')}</textarea><label class="field">Дата и время (Москва)</label><input class="control" name="starts_at" type="datetime-local" required value="${e?esc(new Date(new Date(e.starts_at).getTime()+3*3600000).toISOString().slice(0,16)):''}"><label class="field">Корпус / адрес</label><input class="control" name="building" maxlength="180" required placeholder="Москва, ул. Большая Семёновская, д. 38" value="${esc(e?.building||'')}"><label class="field">Аудитория</label><input class="control" name="room" maxlength="60" required placeholder="А-305" value="${esc(e?.room||'')}"><label class="field">Количество мест</label><input class="control" name="capacity" type="number" min="1" max="10000" required value="${e?.capacity||48}"><label class="field">Количество столов</label><input class="control" name="table_count" type="number" min="1" max="50" required value="${e?.table_count||8}"><label class="field">Мест за столом</label><input class="control" name="table_capacity" type="number" min="1" max="30" required value="${e?.table_capacity||6}"><label class="field">Длительность встречи (минут)</label><input class="control" name="duration_minutes" type="number" min="15" max="480" required value="${e?.duration_minutes||90}"><label class="field" for="poster-file">Фото афиши — из галереи или файлов</label><div class="poster-upload-panel"><input id="poster-file" class="control poster-file-input" type="file" name="poster_file" accept="image/*,.heic,.heif" aria-describedby="poster-upload-hint"><div id="poster-upload-hint" class="smallnote">Выбери фото с телефона. Перед загрузкой оно будет уменьшено автоматически (до 1600 px).</div><img id="poster-upload-preview" class="poster-upload-preview" alt="Предпросмотр афиши" hidden><div id="poster-upload-status" class="smallnote" role="status"></div></div><label class="field">Или ссылка на изображение (HTTPS)</label><input class="control" name="image_url" type="url" placeholder="https://..." value="${esc(e?.image_url||'')}"><div class="notice">Если выбрано фото из галереи, оно заменит ссылку при сохранении. Время вводится по Москве (UTC+3).</div><button class="primary" type="submit">Сохранить встречу</button></form>`;}
 else if(state.view==='requests'){const e=state.events.find(x=>x.id===state.selected);html+=`<button class="back" data-action="admin">‹ Назад</button><h1>Записи на встречу</h1><p class="muted">${esc(e?.title||'')}</p><div class="filter">${['pending','approved','rejected','cancelled'].map(s=>`<span class="pill ${s==='approved'?'green':s==='pending'?'orange':'gray'}">${({pending:'Ожидают',approved:'Одобрены',rejected:'Отклонены',cancelled:'Отменили'})[s]}: ${state.adminRegs.filter(r=>r.status===s).length}</span>`).join('')}</div>${state.adminRegs.length?state.adminRegs.map(r=>`<div class="admin-reg"><div class="person">${safeUser(r)}<div class="person-info"><div class="person-name">${esc([r.first_name,r.last_name].filter(Boolean).join(' '))}</div><div class="person-sub">${r.username?'@'+esc(r.username):'Telegram ID: '+r.user_id} · ${langLabel(r.language)}</div><div class="status">${statusLabel(r.status)}${r.table_number?' · Стол №'+r.table_number:''}</div></div></div></div>`).join(''):'<div class="empty">Заявок пока нет</div>'}`;}
 
 else if(state.view==='shop'){
@@ -402,10 +551,10 @@ if (state.view === 'admin-stats') {
   }
 }
 
-async function refresh(){const r=await api('/api/events');state.events=r.events;render()}
+async function refresh(){const r=await api('/api/events');if(offlineMode)return;if(!Array.isArray(r.events)){enterOffline();throw new Error('Некорректный ответ афиши');}state.events=r.events;saveAgenda(r.events);render()}
 async function participants(){const data=await api(`/api/events/${state.selected}/participants`);state.participants=data.participants;state.tables=data.tables;state.filter='all';state.view='participants';render()}
 async function requests(){state.adminRegs=(await api(`/api/admin/events/${state.selected}/registrations`)).registrations;state.view='requests';render()}
-root.addEventListener('click',async ev=>{const b=ev.target.closest('[data-action]');if(!b)return;const action=b.dataset.action,id=Number(b.dataset.id);try{
+root.addEventListener('click',async ev=>{const b=ev.target.closest('[data-action]');if(!b)return;const action=b.dataset.action,id=Number(b.dataset.id);if(action==='offline-retry'){reconnect();return;}if(offlineMode){if(action==='all'){state.view='all';renderOffline();}else if(action==='event'){state.selected=id;state.view='detail';renderOffline();}return;}try{
  if(['all','mine','admin','detail'].includes(action)){state.view=action;render()}
  else if(action==='event'){state.selected=id;state.language='en';state.view='detail';render()}
  else if(action==='my-stats'){
@@ -461,7 +610,28 @@ else if(action==='shop'){
  else if(action==='decide'){await api(`/api/admin/events/${state.selected}/registrations/${id}`,'PATCH',{status:b.dataset.status});toast(b.dataset.status==='approved'?'Участник одобрен':'Заявка отклонена');await refresh();await requests()}
  else if(action==='toggle-status'){const e=state.events.find(x=>x.id===id);const status=e.status==='cancelled'?'published':'cancelled';if(confirm(status==='cancelled'?'Отменить встречу для всех участников?':'Восстановить встречу?')){await api(`/api/admin/events/${id}/status`,'PATCH',{status});toast('Статус изменён');await refresh()}}
  }catch(e){toast(e.message)}});
+root.addEventListener('change',ev=>{
+  if(ev.target?.id!=='poster-file') return;
+  clearPosterPreviewUrl();
+  const file=ev.target.files?.[0];
+  const preview=root.querySelector('#poster-upload-preview');
+  const status=root.querySelector('#poster-upload-status');
+  if(!preview||!status) return;
+  preview.hidden=true;
+  preview.removeAttribute('src');
+  if(!file){ status.textContent=''; return; }
+  if(file.size>MAX_ORIGINAL_POSTER_BYTES){
+    status.textContent='Файл больше 20 МБ. Выбери другое фото.';
+    ev.target.value='';
+    return;
+  }
+  posterPreviewObjectUrl=URL.createObjectURL(file);
+  preview.src=posterPreviewObjectUrl;
+  preview.hidden=false;
+  status.textContent='Выбрано: '+file.name;
+});
 root.addEventListener('submit',async ev=>{
+ if(offlineMode){ev.preventDefault();return;}
  if(ev.target.id==='organizer-form'){
    ev.preventDefault();
    const id=String(new FormData(ev.target).get('telegram_id')||'').trim();
@@ -490,12 +660,43 @@ root.addEventListener('submit',async ev=>{
     }catch(e){toast(e.message)}
     return;
   }
- if(ev.target.id!=='event-form')return;ev.preventDefault();const f=new FormData(ev.target);const local=f.get('starts_at');const body={title:f.get('title'),description:f.get('description'),building:f.get('building'),room:f.get('room'),capacity:Number(f.get('capacity')),table_count:Number(f.get('table_count')),table_capacity:Number(f.get('table_capacity')),duration_minutes:Number(f.get('duration_minutes')),image_url:f.get('image_url'),starts_at:`${local}:00+03:00`};try{await api(state.editId?`/api/admin/events/${state.editId}`:'/api/admin/events',state.editId?'PUT':'POST',body);toast('Встреча сохранена');state.view='admin';await refresh()}catch(e){toast(e.message)}});
-(async()=>{try{state.me=await api('/api/me');await refresh()}catch(e){root.innerHTML=`<div class="hero"><div class="hero-emoji">🔐</div><h1>Speaking Club</h1><p class="muted">${esc(e.message)}</p><div class="notice">Откройте приложение через кнопку меню вашего Telegram-бота. Для локального тестирования смотрите README.md.</div></div>`}})();
+ if(ev.target.id!=='event-form')return;
+  ev.preventDefault();
+  const form=ev.target;
+  const submitButton=form.querySelector('[type="submit"]');
+  const status=form.querySelector('#poster-upload-status');
+  const f=new FormData(form);
+  const local=f.get('starts_at');
+  const body={title:f.get('title'),description:f.get('description'),building:f.get('building'),room:f.get('room'),capacity:Number(f.get('capacity')),table_count:Number(f.get('table_count')),table_capacity:Number(f.get('table_capacity')),duration_minutes:Number(f.get('duration_minutes')),image_url:String(f.get('image_url')||'').trim(),starts_at:`${local}:00+03:00`};
+  if(submitButton.disabled)return;
+  submitButton.disabled=true;
+  try{
+    const file=form.querySelector('#poster-file')?.files?.[0];
+    if(file){
+      if(status) status.textContent='Подготавливаем фото…';
+      const blob=await preparePosterImage(file);
+      if(status) status.textContent='Загружаем фото на сервер…';
+      body.image_url=await uploadPosterImage(blob);
+    }
+    if(status) status.textContent='Сохраняем встречу…';
+    await api(state.editId?`/api/admin/events/${state.editId}`:'/api/admin/events',state.editId?'PUT':'POST',body);
+    clearPosterPreviewUrl();
+    toast('Встреча сохранена');
+    state.view='admin';
+    await refresh();
+  }catch(e){
+    if(status) status.textContent='Не удалось сохранить: '+e.message;
+    toast(e.message);
+  }finally{
+    if(form.isConnected)submitButton.disabled=false;
+  }
+});
+reconnect();
 
 /* Скрываем отменённые встречи через 2 минуты, завершённые — через 30 минут.
    Данные о встречах и посещениях в Supabase НЕ удаляются. */
 setInterval(() => {
+  if(offlineMode)return;
   const now = Date.now();
   const expired = e =>
     (e.status === 'cancelled' && e.cancelled_at &&
