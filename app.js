@@ -59,7 +59,7 @@ async function uploadPosterImage(blob){
   let response;
   try {
     response=await fetch(POSTER_UPLOAD_URL,{
-      method:'POST', headers:{'X-Telegram-Init-Data':initData}, body:form
+      method:'POST', headers:{'X-Telegram-Init-Data':initData}, body:form, signal:AbortSignal.timeout ? AbortSignal.timeout(60000) : undefined
     });
   } catch (_) {
     throw new Error('Сервер загрузки фото недоступен. Проверь, что функция poster-upload опубликована в Supabase');
@@ -244,7 +244,7 @@ window.addEventListener('online',()=>{if(offlineMode)reconnect();});
 function toast(msg){document.querySelector('.toast')?.remove();const el=document.createElement('div');el.className='toast';el.textContent=msg;document.body.append(el);setTimeout(()=>el.remove(),3500)}
 function top(){return `<div class="top"><div class="brand"><span class="logo">🌍</span><span>Speaking Club<br><span class="smallnote">Московский Политех</span></span></div><span class="tag">Участие бесплатно</span></div>`}
 function nav(){return `<div class="menu"><button data-action="all">Афиша</button><button data-action="mine">Мои записи</button><button data-action="my-stats">🏅 Мои посещения</button>${state.me?.is_admin?'<button data-action="admin">⚙️ Организатор</button>':''}</div>`}
-function render(){if(offlineMode){renderOffline();return;}let html=top();if(state.view==='all'||state.view==='mine'){const mine=state.view==='mine';
+function render(){clearPosterPreviewUrl();if(offlineMode){renderOffline();return;}let html=top();if(state.view==='all'||state.view==='mine'){const mine=state.view==='mine';
 const events=state.events.filter(e=>
   e.status!=='cancelled' &&
   visibleCompletedEvent(e) &&
@@ -323,7 +323,7 @@ state.events.filter(e =>
    (e.cancelled_at && Date.now() < Date.parse(e.cancelled_at) + 120000))
 ).map(e=>
 `<div class="admin-card"><h3>${esc(e.title)}</h3><div class="smallnote">${fmtDate(e.starts_at)} · ${esc(e.room)}</div><div class="status">Записано: ${e.approved_count}/${e.capacity} · ${e.status==='cancelled'?'Отменено':e.status==='completed'?'Завершено':'Опубликовано'}</div><div class="admin-actions"><button class="secondary small" data-action="requests" data-id="${e.id}">Участники (${e.approved_count})</button>${e.status==='published'?`<button class="secondary small" data-action="edit" data-id="${e.id}">Изменить</button><button class="primary small" data-action="complete" data-id="${e.id}">✅ Завершить встречу</button>`:''}${e.status!=='completed'?`<button class="danger small" data-action="toggle-status" data-id="${e.id}">${e.status==='cancelled'?'Восстановить':'Отменить встречу'}</button>`:''}</div></div>`).join('')}${nav()}`;}
-else if(state.view==='editor'){const e=state.events.find(x=>x.id===state.editId);html+=`<button class="back" data-action="admin">‹ Назад</button><h1>${e?'Редактировать встречу':'Новая встреча'}</h1><form id="event-form"><label class="field">Название</label><input class="control" name="title" maxlength="120" required value="${esc(e?.title||'Разговорный клуб')}"><label class="field">Описание</label><textarea class="control" name="description" maxlength="3000">${esc(e?.description||'')}</textarea><label class="field">Дата и время (Москва)</label><input class="control" name="starts_at" type="datetime-local" required value="${e?esc(new Date(new Date(e.starts_at).getTime()+3*3600000).toISOString().slice(0,16)):''}"><label class="field">Корпус / адрес</label><input class="control" name="building" maxlength="180" required placeholder="Москва, ул. Большая Семёновская, д. 38" value="${esc(e?.building||'')}"><label class="field">Аудитория</label><input class="control" name="room" maxlength="60" required placeholder="А-305" value="${esc(e?.room||'')}"><label class="field">Количество мест</label><input class="control" name="capacity" type="number" min="1" max="10000" required value="${e?.capacity||48}"><label class="field">Количество столов</label><input class="control" name="table_count" type="number" min="1" max="50" required value="${e?.table_count||8}"><label class="field">Мест за столом</label><input class="control" name="table_capacity" type="number" min="1" max="30" required value="${e?.table_capacity||6}"><label class="field">Длительность встречи (минут)</label><input class="control" name="duration_minutes" type="number" min="15" max="480" required value="${e?.duration_minutes||90}"><label class="field" for="poster-file">Фото афиши — из галереи или файлов</label><div class="poster-upload-panel"><input id="poster-file" class="control poster-file-input" type="file" name="poster_file" accept="image/*,.heic,.heif" aria-describedby="poster-upload-hint"><div id="poster-upload-hint" class="smallnote">Выбери фото с телефона. Перед загрузкой оно будет уменьшено автоматически (до 1600 px).</div><img id="poster-upload-preview" class="poster-upload-preview" alt="Предпросмотр афиши" hidden><div id="poster-upload-status" class="smallnote" role="status"></div></div><label class="field">Или ссылка на изображение (HTTPS)</label><input class="control" name="image_url" type="url" placeholder="https://..." value="${esc(e?.image_url||'')}"><div class="notice">Если выбрано фото из галереи, оно заменит ссылку при сохранении. Время вводится по Москве (UTC+3).</div><button class="primary" type="submit">Сохранить встречу</button></form>`;}
+else if(state.view==='editor'){const e=state.events.find(x=>x.id===state.editId);html+=`<button class="back" data-action="admin">‹ Назад</button><h1>${e?'Редактировать встречу':'Новая встреча'}</h1><form id="event-form"><label class="field">Название</label><input class="control" name="title" maxlength="120" required value="${esc(e?.title||'Разговорный клуб')}"><label class="field">Описание</label><textarea class="control" name="description" maxlength="3000">${esc(e?.description||'')}</textarea><label class="field">Дата и время (Москва)</label><input class="control" name="starts_at" type="datetime-local" required value="${e?esc(new Date(new Date(e.starts_at).getTime()+3*3600000).toISOString().slice(0,16)):''}"><label class="field">Корпус / адрес</label><input class="control" name="building" maxlength="180" required placeholder="Москва, ул. Большая Семёновская, д. 38" value="${esc(e?.building||'')}"><label class="field">Аудитория</label><input class="control" name="room" maxlength="60" required placeholder="А-305" value="${esc(e?.room||'')}"><label class="field">Количество мест</label><input class="control" name="capacity" type="number" min="1" max="10000" required value="${e?.capacity||48}"><label class="field">Количество столов</label><input class="control" name="table_count" type="number" min="1" max="50" required value="${e?.table_count||8}"><label class="field">Мест за столом</label><input class="control" name="table_capacity" type="number" min="1" max="30" required value="${e?.table_capacity||6}"><label class="field">Длительность встречи (минут)</label><input class="control" name="duration_minutes" type="number" min="15" max="480" required value="${e?.duration_minutes||90}"><label class="field" for="poster-file">Фото афиши — из галереи или файлов</label><div class="poster-upload-panel"><div class="poster-picker-actions"><button type="button" class="secondary" data-poster-picker="poster-file">📷 Выбрать фотографию</button><button type="button" class="secondary" data-poster-picker="poster-local-file">📁 Выбрать файл</button></div><input id="poster-file" type="file" accept="image/*" hidden><input id="poster-local-file" type="file" accept=".jpg,.jpeg,.png,.webp,.heic,.heif" hidden><div id="poster-upload-hint" class="smallnote">Выбери фото с телефона. Перед загрузкой оно будет уменьшено автоматически (до 1600 px).</div><img id="poster-upload-preview" class="poster-upload-preview" alt="Предпросмотр афиши" ${e?.image_url?`src="${esc(e.image_url)}"`:"hidden"}><div id="poster-upload-status" class="smallnote" role="status"></div></div><label class="field">Или ссылка на изображение (HTTPS)</label><input class="control" name="image_url" type="url" placeholder="https://..." value="${esc(e?.image_url||'')}"><div class="notice">Если выбрано фото из галереи, оно заменит ссылку при сохранении. Время вводится по Москве (UTC+3).</div><button class="primary" type="submit">Сохранить встречу</button></form>`;}
 else if(state.view==='requests'){const e=state.events.find(x=>x.id===state.selected);html+=`<button class="back" data-action="admin">‹ Назад</button><h1>Записи на встречу</h1><p class="muted">${esc(e?.title||'')}</p><div class="filter">${['pending','approved','rejected','cancelled'].map(s=>`<span class="pill ${s==='approved'?'green':s==='pending'?'orange':'gray'}">${({pending:'Ожидают',approved:'Одобрены',rejected:'Отклонены',cancelled:'Отменили'})[s]}: ${state.adminRegs.filter(r=>r.status===s).length}</span>`).join('')}</div>${state.adminRegs.length?state.adminRegs.map(r=>`<div class="admin-reg"><div class="person">${safeUser(r)}<div class="person-info"><div class="person-name">${esc([r.first_name,r.last_name].filter(Boolean).join(' '))}</div><div class="person-sub">${r.username?'@'+esc(r.username):'Telegram ID: '+r.user_id} · ${langLabel(r.language)}</div><div class="status">${statusLabel(r.status)}${r.table_number?' · Стол №'+r.table_number:''}</div></div></div></div>`).join(''):'<div class="empty">Заявок пока нет</div>'}`;}
 
 else if(state.view==='shop'){
@@ -687,25 +687,39 @@ else if(action==='shop'){
  else if(action==='decide'){await api(`/api/admin/events/${state.selected}/registrations/${id}`,'PATCH',{status:b.dataset.status});toast(b.dataset.status==='approved'?'Участник одобрен':'Заявка отклонена');await refresh();await requests()}
  else if(action==='toggle-status'){const e=state.events.find(x=>x.id===id);const status=e.status==='cancelled'?'published':'cancelled';if(confirm(status==='cancelled'?'Отменить встречу для всех участников?':'Восстановить встречу?')){await api(`/api/admin/events/${id}/status`,'PATCH',{status});toast('Статус изменён');await refresh()}}
  }catch(e){toast(e.message)}});
-root.addEventListener('change',ev=>{
-  if(ev.target?.id!=='poster-file') return;
-  clearPosterPreviewUrl();
-  const file=ev.target.files?.[0];
-  const preview=root.querySelector('#poster-upload-preview');
-  const status=root.querySelector('#poster-upload-status');
-  if(!preview||!status) return;
-  preview.hidden=true;
-  preview.removeAttribute('src');
-  if(!file){ status.textContent=''; return; }
-  if(file.size>MAX_ORIGINAL_POSTER_BYTES){
-    status.textContent='Файл больше 20 МБ. Выбери другое фото.';
-    ev.target.value='';
+root.addEventListener('click', ev => {
+  const picker = ev.target.closest('[data-poster-picker]');
+  if (!picker || offlineMode || !state.me?.is_admin) return;
+  const form = picker.closest('#event-form');
+  if (!form || form.querySelector('[type="submit"]')?.disabled) return;
+  form.querySelector('#' + picker.dataset.posterPicker)?.click();
+});
+root.addEventListener('change', ev => {
+  if (!['poster-file','poster-local-file'].includes(ev.target?.id)) return;
+  const form = ev.target.closest('#event-form');
+  if (!form) return;
+  const file = ev.target.files?.[0];
+  if (!file) return;
+  const preview = form.querySelector('#poster-upload-preview');
+  const status = form.querySelector('#poster-upload-status');
+  if (!preview || !status) return;
+  if (file.size > MAX_ORIGINAL_POSTER_BYTES || !file.size) {
+    ev.target.value = '';
+    status.textContent = 'Выбери непустое фото размером до 20 МБ.';
     return;
   }
-  posterPreviewObjectUrl=URL.createObjectURL(file);
-  preview.src=posterPreviewObjectUrl;
-  preview.hidden=false;
-  status.textContent='Выбрано: '+file.name;
+  if (!file.type.startsWith('image/') && !/\.(heic|heif|jpg|jpeg|png|webp)$/i.test(file.name)) {
+    ev.target.value = '';
+    status.textContent = 'Выбери изображение JPG, PNG, WEBP или HEIC.';
+    return;
+  }
+  const other = form.querySelector(ev.target.id === 'poster-file' ? '#poster-local-file' : '#poster-file');
+  if (other) other.value = '';
+  clearPosterPreviewUrl();
+  posterPreviewObjectUrl = URL.createObjectURL(file);
+  preview.src = posterPreviewObjectUrl;
+  preview.hidden = false;
+  status.textContent = 'Выбрано: ' + file.name;
 });
 root.addEventListener('submit',async ev=>{
  if(offlineMode){ev.preventDefault();return;}
@@ -741,6 +755,7 @@ root.addEventListener('submit',async ev=>{
   ev.preventDefault();
   const form=ev.target;
   const submitButton=form.querySelector('[type="submit"]');
+  const editId=state.editId;
   const status=form.querySelector('#poster-upload-status');
   const f=new FormData(form);
   const local=f.get('starts_at');
@@ -748,7 +763,7 @@ root.addEventListener('submit',async ev=>{
   if(submitButton.disabled)return;
   submitButton.disabled=true;
   try{
-    const file=form.querySelector('#poster-file')?.files?.[0];
+    const file=form.querySelector('#poster-file')?.files?.[0] || form.querySelector('#poster-local-file')?.files?.[0];
     if(file){
       if(status) status.textContent='Подготавливаем фото…';
       const blob=await preparePosterImage(file);
@@ -756,7 +771,8 @@ root.addEventListener('submit',async ev=>{
       body.image_url=await uploadPosterImage(blob);
     }
     if(status) status.textContent='Сохраняем встречу…';
-    await api(state.editId?`/api/admin/events/${state.editId}`:'/api/admin/events',state.editId?'PUT':'POST',body);
+    if(!form.isConnected || state.view!=='editor' || state.editId!==editId || offlineMode) throw new Error('Форма закрыта или связь потеряна. Открой встречу заново.');
+    await api(editId?`/api/admin/events/${editId}`:'/api/admin/events',editId?'PUT':'POST',body);
     clearPosterPreviewUrl();
     toast('Встреча сохранена');
     state.view='admin';
