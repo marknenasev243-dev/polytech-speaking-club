@@ -340,14 +340,14 @@ else if(state.view==='my-stats'){
   const s=state.stats||{count:0,history:[]};
   const top=state.leaderboard.slice(0,5);
   const medal=n=>n===1?'🥇':n===2?'🥈':n===3?'🥉':`№${n}`;
-  const playerRow=p=>`<div class="person"><span style="min-width:38px;font-weight:700">${medal(p.place)}</span><div class="person-info"><div class="person-name">${esc([p.first_name,p.last_name].filter(Boolean).join(' ')||'Участник')}</div></div><b>${toClubCoin(p.visits)} 🪙 🏅</b></div>`;
+  const playerRow=p=>`<div class="person"><span style="min-width:38px;font-weight:700">${medal(p.place)}</span><div class="person-info"><div class="person-name">${esc([p.first_name,p.last_name].filter(Boolean).join(' ')||'Участник')}</div></div><b>${toClubCoin(p.visits)} <span class="club-coin-icon" aria-label="Club coin"> <svg viewBox="0 0 24 24" aria-hidden="true"> <path d="M12 2.5l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3.1-5.8 3.1 1.1-6.5-4.7-4.6 6.5-.9z" fill="#FFF1B3" stroke="#955B0A" stroke-width="1.6" stroke-linejoin="round" /> </svg> </span> 🏅</b></div>`;
   html+=`<button class="back" data-action="all">‹ Назад</button><section class="hero stats-hero"><div class="hero-emoji">🏅</div><h1>Мои посещения</h1><p class="muted">Засчитываются после завершения встречи организатором</p><h2>${s.count} ${s.count===1?'посещение':'посещений'}</h2></section><h2>🏆 Топ-5 участников</h2><p class="muted">По количеству Club coin</p><div class="panel">${top.length?top.map(playerRow).join(''):'<div class="empty">Пока никто не набрал посещений</div>'}</div>${state.leaderboardOpen?`<h3>Полный рейтинг</h3><div class="panel">${state.leaderboard.slice(5).length?state.leaderboard.slice(5).map(playerRow).join(''):'<div class="empty">Других участников пока нет</div>'}</div>${state.leaderboardHasMore?'<button class="secondary" data-action="leaderboard-more">Показать ещё</button>':'<button class="secondary" data-action="leaderboard-hide">Свернуть рейтинг</button>'}`:state.leaderboardHasMore?'<button class="secondary" data-action="leaderboard-more">Посмотреть остальных участников</button>':''}<h2>История посещений</h2><div class="panel">${s.history.length?s.history.map(h=>`<div class="person"><div class="person-info"><b>${esc(h.event?.title||'Встреча')}</b><div class="person-sub">${h.event?.starts_at?fmtDate(h.event.starts_at):''}</div></div><span class="pill green">+1</span></div>`).join(''):'<div class="empty">Пока нет засчитанных посещений</div>'}</div>${nav()}`;
 
 
 html += `
   <div class="clubcoin-hints">
     <div class="clubcoin-info">
-      🪙 1 посещение ≈ 33 Club coin
+      <span class="club-coin-icon" aria-label="Club coin"> <svg viewBox="0 0 24 24" aria-hidden="true"> <path d="M12 2.5l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3.1-5.8 3.1 1.1-6.5-4.7-4.6 6.5-.9z" fill="#FFF1B3" stroke="#955B0A" stroke-width="1.6" stroke-linejoin="round" /> </svg> </span> 1 посещение ≈ 33 Club coin
     </div>
     <button class="clubcoin-shop-btn" data-action="shop">
       На что можно потратить Club coin? ›
@@ -612,7 +612,7 @@ if (state.view === 'admin-stats') {
                     Место №${Number(p.place)}
                   </div>
                 </div>
-                <b>${toClubCoin(Number(p.visits || 0))} 🪙</b>
+                <b>${toClubCoin(Number(p.visits || 0))} <span class="club-coin-icon" aria-label="Club coin"> <svg viewBox="0 0 24 24" aria-hidden="true"> <path d="M12 2.5l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3.1-5.8 3.1 1.1-6.5-4.7-4.6 6.5-.9z" fill="#FFF1B3" stroke="#955B0A" stroke-width="1.6" stroke-linejoin="round" /> </svg> </span></b>
               </div>
             `).join('')
           : '<div class="empty">Ничего не найдено</div>';
