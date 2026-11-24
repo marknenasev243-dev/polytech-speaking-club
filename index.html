@@ -63,6 +63,30 @@
     @media (prefers-reduced-motion: reduce) {
       .psc-loading-wheel::before {animation: none;}
     }
+    /* Предупреждение о качестве связи — отдельно от общих стеклянных стилей. */
+    #app .psc-connection-warning {
+      box-sizing: border-box;
+      width: 100%;
+      margin: 0 0 12px;
+      padding: 10px 13px;
+      border: 1px solid #d9aa4d;
+      border-radius: 13px;
+      background: rgba(255, 244, 208, .95);
+      color: #69460d;
+      box-shadow: 0 3px 12px rgba(89, 60, 8, .12);
+      font-size: 12px;
+      line-height: 1.4;
+      text-align: left;
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+    }
+    #app .psc-connection-warning strong {display:block;font-size:14px;margin-bottom:3px;}
+    #app .psc-connection-warning span {display:block;}
+    html[data-winter-theme="dark"] #app .psc-connection-warning {
+      background: rgba(65, 49, 28, .94);
+      border-color: #cda35a;
+      color: #ffe9b7;
+    }
   </style>
 </head>
 <body>
@@ -105,7 +129,7 @@
     }
   }, 32000);
 </script>
-<script type="module" src="./app.js?v=resilience-20261124-1"></script>
+<script type="module" src="./app.js?v=connection-20261124-2"></script>
 
 </body>
 </html>
