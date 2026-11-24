@@ -444,7 +444,7 @@ body > .winter-theme-switch {
   overflow: visible !important;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
-  transition: opacity .18s ease, visibility .18s ease;
+  transition: opacity .18s ease;
 }
 /* Когда другое управление перекрывает звезду, кнопка уступает место. */
 
@@ -452,6 +452,7 @@ body > .winter-theme-switch.winter-theme-obstructed {
   opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
+  transition: none !important;
 }
 
 body > .winter-theme-switch .winter-theme-ring {
@@ -493,6 +494,7 @@ body > .winter-theme-switch .winter-theme-label {
 body > .winter-theme-switch.winter-label-obstructed .winter-theme-label {
   opacity: 0 !important;
   visibility: hidden !important;
+  transition: none !important;
 }
 body > .winter-theme-switch .winter-theme-star,
 body > .winter-theme-switch .winter-theme-lights { display: none !important; }
